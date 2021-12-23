@@ -13,7 +13,7 @@ brep_to_h5m(
         8: 'material_for_volume_8',
     },
     h5m_filename='dagmc.h5m',
-    min_mesh_size= 30,
-    max_mesh_size = 50,
+    min_mesh_size= 1,
+    max_mesh_size = 10,
     mesh_algorithm = 1,
 )

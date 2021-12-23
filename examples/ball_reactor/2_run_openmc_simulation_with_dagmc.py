@@ -24,14 +24,22 @@ geometry = odw.Geometry(h5m_filename=h5m_filename, reflective_angles=(0, 3.14159
 materials = odw.Materials(
     h5m_filename=h5m_filename,
     correspondence_dict={
-        # "material_for_volume_1": "DT_plasma", removed plasma as not many interactions occur here
-        "material_for_volume_2": "Be",  # applying beryllium to all materials to reduce nuclear data loading time
+        "material_for_volume_1": "Be",
+        "material_for_volume_2": "Be", 
         "material_for_volume_3": "Be",
         "material_for_volume_4": "Be",
         "material_for_volume_5": "Be",
         "material_for_volume_6": "Be",
         "material_for_volume_7": "Be",
         "material_for_volume_8": "Be",
+        # "material_for_volume_9": "Be", # plasma
+        "material_for_volume_10": "Be",
+        "material_for_volume_11": "Be",
+        "material_for_volume_12": "Be",
+        "material_for_volume_13": "Be",
+        "material_for_volume_14": "Be",
+        "material_for_volume_15": "Be",
+        "material_for_volume_16": "Be",
     },
 )
 
@@ -63,7 +71,7 @@ settings.batches = 1
 settings.particles = 100_000
 # assigns a ring source of DT energy neutrons to the source using the
 # openmc_plasma_source package
-settings.source = FusionRingSource(fuel="DT", angles =(0, 3.14159265359), radius=350)
+settings.source = FusionRingSource(fuel="DT", angles =(0, 3.14159265359), radius=330)
 
 # no modifications are made to the default openmc.Model object
 my_model = openmc.Model(
