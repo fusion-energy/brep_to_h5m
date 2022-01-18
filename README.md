@@ -7,7 +7,11 @@ The [stl-to-h5m](github.com/fusion-energy/stl_to_h5m) package then converts the 
 
 # Installation
 
+Create a new enviroment, activate the enviroment, install MOAB, GMSH and this package
+
 ```
+conda create --name my_env
+conda activate my_env
 conda install -c conda-forge moab
 sudo apt install python3-gmsh
 pip install git+https://github.com/fusion-energy/brep_to_h5m
@@ -16,7 +20,7 @@ pip install git+https://github.com/fusion-energy/brep_to_h5m
 
 # Usage
 
-See the [examples] folder for a complete workflow from geometry creation to conversion to h5m and then use in and OpenMC simulation.
+See the [examples](https://github.com/fusion-energy/brep_to_h5m/tree/main/examples) folder for a complete workflow from geometry creation to conversion to h5m and then use in and OpenMC simulation.
 
 To make a Brep file with merged surfaces consider using the [Paramak](https://github.com/fusion-energy/paramak) as it has a ```export_brep``` method that merges the shared surfaces for Brep files.
 
