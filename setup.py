@@ -37,6 +37,8 @@ setuptools.setup(
     install_requires=[
         "gmsh",
         "trimesh",
+        "brep_part_finder",
+        "networkx",
         # "pymoab", is needed but not available on pip
         # pymoab can be install with Conda 
     ],
