@@ -24,6 +24,7 @@ geometry = odw.Geometry(h5m_filename=h5m_filename, reflective_angles=(0, 3.14159
 materials = odw.Materials(
     h5m_filename=h5m_filename,
     correspondence_dict={
+        #TODO change to blanket', 'blanket_rear_wall', 'center_column_shield', 'divertor_lower', 'divertor_upper', 'firstwall', 'inboard_tf_coils', 'pf_coil_1', 'pf_coil_2', 'pf_coil_3', 'pf_coil_4'
         "material_for_volume_1": "Be",
         "material_for_volume_2": "Be", 
         "material_for_volume_3": "Be",

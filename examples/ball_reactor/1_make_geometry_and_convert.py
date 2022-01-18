@@ -1,6 +1,7 @@
 import paramak
 from brep_to_h5m import brep_to_h5m
-import dagmc_h5m_file_inspector as di
+import dagmc_h5m_file_inspector as di  # optional just used to inspect the file
+import brep_part_finder as bpf
 
 
 # creates a 3D model of a reactor with PF coils
@@ -19,7 +20,7 @@ my_reactor = paramak.BallReactor(
     elongation=2,
     triangularity=0.55,
     rotation_angle=180,
-    pf_coil_case_thicknesses=[10, 10, 10, 12],
+    # pf_coil_case_thicknesses=[10, 10, 10, 12], #can't be meshed currently
     pf_coil_radial_thicknesses=[20, 50, 50, 20],
     pf_coil_vertical_thicknesses=[20, 50, 50, 20],
     pf_coil_radial_position=[500, 575, 575, 500],
@@ -34,30 +35,26 @@ my_reactor = paramak.BallReactor(
 # saves the reactor as a Brep file with merged surfaces
 my_reactor.export_brep('my_brep_file_with_merged_surfaces.brep')
 
+# brep file is imported
+my_brep_part_properties = bpf.get_brep_part_properties('my_brep_file_with_merged_surfaces.brep')
+
+# request to find part ids that are mixed up in the Brep file
+# using the volume, center, bounding box that we know about when creating the
+# CAD geometry in the first place
+key_and_part_id = bpf.get_dict_of_part_ids(
+    brep_part_properties = my_brep_part_properties,
+    shape_properties = my_reactor.part_properties
+)
+
+key_and_part_id = {key:val for key, val in key_and_part_id.items() if val != 'plasma'}
+print(key_and_part_id)
+
 brep_to_h5m(
     brep_filename='my_brep_file_with_merged_surfaces.brep',
-    volumes_with_tags={
-        1:'material_for_volume_1',
-        2:'material_for_volume_2',
-        3:'material_for_volume_3',
-        4:'material_for_volume_4',
-        5:'material_for_volume_5',
-        6:'material_for_volume_6',
-        7:'material_for_volume_7',
-        8:'material_for_volume_8',
-        # 9:'material_for_volume_9', # in this particular configuration 9 is the plasma, the volume number of the plasma will change for different models
-        10:'material_for_volume_10',
-        11:'material_for_volume_11',
-        12:'material_for_volume_12',
-        13:'material_for_volume_13',
-        14:'material_for_volume_14',
-        15:'material_for_volume_15',
-        16:'material_for_volume_16',
-    },    
+    volumes_with_tags=key_and_part_id,  
     h5m_filename='dagmc.h5m',
-    min_mesh_size= 1,
+    min_mesh_size= 20,
     max_mesh_size = 30,  # reduce this number for an improved mesh
-    mesh_algorithm = 1,
 )
 
 tags = di.get_materials_from_h5m("dagmc.h5m")
