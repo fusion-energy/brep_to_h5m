@@ -1,6 +1,7 @@
 import gmsh
 import trimesh
 from stl_to_h5m import stl_to_h5m
+import brep_part_finder as bpf
 
 
 def brep_to_h5m(
@@ -43,7 +44,10 @@ def brep_to_h5m(
             trimesh.repair.fix_normals(mesh)  # reqired as gmsh stl export from brep can get the inside outside mixed up
             new_filename = filename[:-4]+'_with_corrected_face_normals.stl'
             mesh.export(new_filename)
-            files_with_tags.append((new_filename, volumes_with_tags[vol_id]))
+            tag_name = volumes_with_tags[vol_id]
+            if not tag_name.startswith('mat_'):
+                tag_name = 'mat_'+tag_name
+            files_with_tags.append((new_filename, tag_name))
 
     stl_to_h5m(
         files_with_tags=files_with_tags,
@@ -73,6 +77,7 @@ def paramak_to_h5m(
     # CAD geometry in the first place
     key_and_part_id = bpf.get_dict_of_part_ids(
         brep_part_properties = my_brep_part_properties,
+        # part_properties method requires version great than 0.6.5 of the paramak
         shape_properties = reactor.part_properties
     )
 
