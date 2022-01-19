@@ -9,7 +9,7 @@ def brep_to_h5m(
     volumes_with_tags: dict,
     h5m_filename: str = "dagmc.h5m",
     min_mesh_size: int = 30,
-    max_mesh_size: int = 50,
+    max_mesh_size: int = 10,
     mesh_algorithm: int = 1,
 ):
 
@@ -62,7 +62,7 @@ def paramak_to_h5m(
     reactor,
     h5m_filename="dagmc.h5m",
     min_mesh_size=1,
-    max_mesh_size=30,  # reduce this number for an improved mesh
+    max_mesh_size=10,  # reduce this number for an improved mesh
     mesh_algorithm=1,
 ):
 
