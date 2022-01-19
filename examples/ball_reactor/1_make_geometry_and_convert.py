@@ -33,31 +33,33 @@ my_reactor = paramak.BallReactor(
 
 
 # saves the reactor as a Brep file with merged surfaces
-my_reactor.export_brep('my_brep_file_with_merged_surfaces.brep')
+my_reactor.export_brep("my_brep_file_with_merged_surfaces.brep")
 
 # brep file is imported
-my_brep_part_properties = bpf.get_brep_part_properties('my_brep_file_with_merged_surfaces.brep')
+my_brep_part_properties = bpf.get_brep_part_properties(
+    "my_brep_file_with_merged_surfaces.brep"
+)
 
 # request to find part ids that are mixed up in the Brep file
 # using the volume, center, bounding box that we know about when creating the
 # CAD geometry in the first place
 key_and_part_id = bpf.get_dict_of_part_ids(
-    brep_part_properties = my_brep_part_properties,
-    shape_properties = my_reactor.part_properties
+    brep_part_properties=my_brep_part_properties,
+    shape_properties=my_reactor.part_properties,
 )
 
-key_and_part_id = {key:val for key, val in key_and_part_id.items() if val != 'plasma'}
+key_and_part_id = {key: val for key, val in key_and_part_id.items() if val != "plasma"}
 print(key_and_part_id)
 
 brep_to_h5m(
-    brep_filename='my_brep_file_with_merged_surfaces.brep',
-    volumes_with_tags=key_and_part_id,  
-    h5m_filename='dagmc.h5m',
-    min_mesh_size= 20,
-    max_mesh_size = 30,  # reduce this number for an improved mesh
+    brep_filename="my_brep_file_with_merged_surfaces.brep",
+    volumes_with_tags=key_and_part_id,
+    h5m_filename="dagmc.h5m",
+    min_mesh_size=20,
+    max_mesh_size=30,  # reduce this number for an improved mesh
 )
 
 tags = di.get_materials_from_h5m("dagmc.h5m")
 
 # each tag will need a material definition in OpenMC
-print('material tags within DAGMC h5m file', tags)
+print("material tags within DAGMC h5m file", tags)
