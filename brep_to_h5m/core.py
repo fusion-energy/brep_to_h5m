@@ -48,6 +48,8 @@ def brep_to_h5m(
             mesh.export(new_filename)
             tag_name = volumes_with_tags[vol_id]
             if not tag_name.startswith("mat_"):
+                # TODO check if graveyard or mat_graveyard should be excluded
+                # and tag_name.lower!='graveyard':
                 tag_name = "mat_" + tag_name
             files_with_tags.append((new_filename, tag_name))
 
