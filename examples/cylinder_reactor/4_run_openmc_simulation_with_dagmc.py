@@ -44,12 +44,8 @@ my_bounding_box = geometry.corners()
 # and scores) to be applied to the DAGMC geometry. By default the mesh will be
 # applied across the entire geomtry with and the size of the geometry is
 # automatically found.
-tally1 = odw.MeshTally3D(
-    tally_type="flux", bounding_box=my_bounding_box
-)
-tally2 = odw.MeshTally3D(
-    tally_type="heating", bounding_box=my_bounding_box
-)
+tally1 = odw.MeshTally3D(tally_type="flux", bounding_box=my_bounding_box)
+tally2 = odw.MeshTally3D(tally_type="heating", bounding_box=my_bounding_box)
 
 # no modifications are made to the default openmc.Tallies
 tallies = openmc.Tallies([tally1, tally2])
@@ -63,7 +59,7 @@ settings.batches = 1
 settings.particles = 100_000
 # assigns a ring source of DT energy neutrons to the source using the
 # openmc_plasma_source package
-settings.source = FusionRingSource(fuel="DT", angles =(0, 3.14159265359), radius=330)
+settings.source = FusionRingSource(fuel="DT", angles=(0, 3.14159265359), radius=330)
 
 # no modifications are made to the default openmc.Model object
 my_model = openmc.Model(
@@ -75,18 +71,18 @@ statepoint_file = my_model.run()
 statepoint = openmc.StatePoint(statepoint_file)
 
 # assumes the statepoint file has a RegularMesh tally with a certain name
-my_tally = statepoint.get_tally(name='flux_on_3D_mesh')
+my_tally = statepoint.get_tally(name="flux_on_3D_mesh")
 
 # converts the tally result into a VTK file
 write_mesh_tally_to_vtk(
     tally=my_tally,
-    filename = "flux_on_3D_mesh.vtk",
+    filename="flux_on_3D_mesh.vtk",
 )
 # assumes the statepoint file has a RegularMesh tally with a certain name
-my_tally = statepoint.get_tally(name='heating_on_3D_mesh')
+my_tally = statepoint.get_tally(name="heating_on_3D_mesh")
 
 # converts the tally result into a VTK file
 write_mesh_tally_to_vtk(
     tally=my_tally,
-    filename = "heating_on_3D_mesh.vtk",
+    filename="heating_on_3D_mesh.vtk",
 )

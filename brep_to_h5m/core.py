@@ -1,12 +1,13 @@
 import gmsh
 import trimesh
 from stl_to_h5m import stl_to_h5m
+import brep_part_finder as bpf
 
 
 def brep_to_h5m(
     brep_filename: str,
     volumes_with_tags: dict,
-    h5m_filename: str = 'dagmc.h5m',
+    h5m_filename: str = "dagmc.h5m",
     min_mesh_size: int = 30,
     max_mesh_size: int = 50,
     mesh_algorithm: int = 1,
@@ -21,10 +22,10 @@ def brep_to_h5m(
     gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
     gmsh.option.setNumber("Mesh.MeshSizeMax", max_mesh_size)
     gmsh.model.mesh.generate(2)
-    stl_filenames=[]
+    stl_filenames = []
     for dim_and_vol in volumes:
         vol_id = dim_and_vol[1]
-        entities_in_volume = gmsh.model.getAdjacencies(3,vol_id)
+        entities_in_volume = gmsh.model.getAdjacencies(3, vol_id)
         surfaces_in_volume = entities_in_volume[1]
         ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
         gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
@@ -39,28 +40,31 @@ def brep_to_h5m(
         vol_id = filename_vol_id[0]
         if vol_id in volumes_with_tags.keys():
             mesh = trimesh.load_mesh(filename)
-            print('file', filename, 'is watertight', mesh.is_watertight)
-            trimesh.repair.fix_normals(mesh)  # reqired as gmsh stl export from brep can get the inside outside mixed up
-            new_filename = filename[:-4]+'_with_corrected_face_normals.stl'
+            print("file", filename, "is watertight", mesh.is_watertight)
+            trimesh.repair.fix_normals(
+                mesh
+            )  # reqired as gmsh stl export from brep can get the inside outside mixed up
+            new_filename = filename[:-4] + "_with_corrected_face_normals.stl"
             mesh.export(new_filename)
-            files_with_tags.append((new_filename, volumes_with_tags[vol_id]))
+            tag_name = volumes_with_tags[vol_id]
+            if not tag_name.startswith("mat_"):
+                tag_name = "mat_" + tag_name
+            files_with_tags.append((new_filename, tag_name))
 
-    stl_to_h5m(
-        files_with_tags=files_with_tags,
-        h5m_filename=h5m_filename
-    )
+    stl_to_h5m(files_with_tags=files_with_tags, h5m_filename=h5m_filename)
 
     return h5m_filename
 
+
 def paramak_to_h5m(
     reactor,
-    h5m_filename='dagmc.h5m',
-    min_mesh_size= 1,
-    max_mesh_size = 30,  # reduce this number for an improved mesh
-    mesh_algorithm = 1,
+    h5m_filename="dagmc.h5m",
+    min_mesh_size=1,
+    max_mesh_size=30,  # reduce this number for an improved mesh
+    mesh_algorithm=1,
 ):
 
-    temp_brep_filename='reactor.brep'
+    temp_brep_filename = "reactor.brep"
 
     # saves the reactor as a Brep file with merged surfaces
     reactor.export_brep(temp_brep_filename)
@@ -72,15 +76,16 @@ def paramak_to_h5m(
     # using the volume, center, bounding box that we know about when creating the
     # CAD geometry in the first place
     key_and_part_id = bpf.get_dict_of_part_ids(
-        brep_part_properties = my_brep_part_properties,
-        shape_properties = reactor.part_properties
+        brep_part_properties=my_brep_part_properties,
+        # part_properties method requires version great than 0.6.5 of the paramak
+        shape_properties=reactor.part_properties,
     )
 
     brep_to_h5m(
         brep_filename=temp_brep_filename,
-        volumes_with_tags=key_and_part_id,  
+        volumes_with_tags=key_and_part_id,
         h5m_filename=h5m_filename,
-        min_mesh_size= min_mesh_size,
-        max_mesh_size = max_mesh_size,  # reduce this number for an improved mesh
-        mesh_algorithm = mesh_algorithm,
+        min_mesh_size=min_mesh_size,
+        max_mesh_size=max_mesh_size,  # reduce this number for an improved mesh
+        mesh_algorithm=mesh_algorithm,
     )

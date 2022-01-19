@@ -40,6 +40,6 @@ setuptools.setup(
         "brep_part_finder",
         "networkx",
         # "pymoab", is needed but not available on pip
-        # pymoab can be install with Conda 
+        # pymoab can be install with Conda
     ],
 )
