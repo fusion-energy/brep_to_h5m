@@ -7,14 +7,22 @@ The [stl-to-h5m](github.com/fusion-energy/stl_to_h5m) package then converts the 
 
 # Installation
 
-Create a new enviroment, activate the enviroment, install MOAB, GMSH and this package
+Create a new enviroment and activate the enviroment.
 
-```
+```bash
 conda create --name my_env
 conda activate my_env
+```
+
+Install dependancies that are not installed with pip ([MOAB](https://bitbucket.org/fathomteam/moab) and [GMSH](https://gmsh.info/))
+```bash
 conda install -c conda-forge moab
 sudo apt install python3-gmsh
-pip install git+https://github.com/fusion-energy/brep_to_h5m
+```
+
+Then install this package
+```bash
+pip install brep_to_h5m
 ```
 
 
