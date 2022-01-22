@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="brep_to_dagmc",
+    name="brep_to_h5m",
     version="develop",
     summary="Convert Brep files to h5m files, DAGMC geometry",
     author="fusion-energy",
@@ -16,7 +16,7 @@ setuptools.setup(
     zip_safe=True,
     package_dir={"brep_to_h5m": "brep_to_h5m"},
     package_data={
-        "brep_to_dagmc": [
+        "brep_to_h5m": [
             "requirements.txt",
             "README.md",
             "LICENSE",
@@ -39,6 +39,7 @@ setuptools.setup(
         "trimesh",
         "brep_part_finder",
         "networkx",
+        "stl_to_h5m",
         # "pymoab", is needed but not available on pip
         # pymoab can be install with Conda
     ],
