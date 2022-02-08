@@ -1,6 +1,5 @@
 import tempfile
 
-import brep_part_finder as bpf
 import gmsh
 import trimesh
 from stl_to_h5m import stl_to_h5m

@@ -5,7 +5,23 @@ A Python package that converts Brep CAD geometry files to h5m geometry files com
 The method uses gmsh to create a conformal mesh of the geometry and then exports separate volumes to STL files.
 The [stl-to-h5m](github.com/fusion-energy/stl_to_h5m) package then converts the non overlapping STL files into a h5m geometry.
 
-# Installation
+# Installation (Conda)
+
+Create a new enviroment and activate the enviroment.
+
+```bash
+conda create --name my_env
+conda activate my_env
+```
+
+Then install this package
+```bash
+conda install -c fusion-energy -c conda-forge brep_to_h5m
+```
+
+The above command should also install ```moab``` and ```gmsh```
+
+# Installation (Conda + pip)
 
 Create a new enviroment and activate the enviroment.
 

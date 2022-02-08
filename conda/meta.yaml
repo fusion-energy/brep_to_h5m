@@ -19,10 +19,10 @@ requirements:
   run:
     - python
     - trimesh
-    - brep_part_finder
     - networkx
-    - stl_to_h5m
-    - gmsh
+    - stl_to_h5m  # which brings in moab
+    - gmsh  # core gmsh package without python bindings
+    - python-gmsh  # python bindings to gmsh
 
 test:
   imports:
