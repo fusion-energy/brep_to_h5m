@@ -1,0 +1,49 @@
+{% set name = "brep_to_h5m" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ GIT_DESCRIBE_TAG }}
+
+source:
+  path: ..
+
+build:
+  number: 0
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - python {{ python }}
+    - setuptools
+  run:
+    - python
+    - trimesh
+    - networkx
+    - stl_to_h5m  # which brings in moab
+    - gmsh  # core gmsh package without python bindings
+    - python-gmsh  # python bindings to gmsh
+
+test:
+  imports:
+    - brep_to_h5m
+  requires:
+    - pytest
+  # source_files:
+  #   - tests/
+  #   - examples/
+  # commands:
+  #   - pytest tests
+
+
+about:
+  home: "https://github.com/fusion-energy/brep_to_h5m"
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE.txt
+  doc_url: https://github.com/fusion-energy/brep_to_h5m
+  dev_url: https://github.com/fusion-energy/brep_to_h5m
+  summary: Converts Brep CAD geometry files to h5m geometry files compatible with DAGMC simulations
+
+extra:
+  recipe-maintainers:
+    - shimwell

@@ -1,6 +1,5 @@
 import tempfile
 
-import brep_part_finder as bpf
 import gmsh
 import trimesh
 from stl_to_h5m import stl_to_h5m
@@ -96,38 +95,3 @@ def brep_to_h5m(
             os.remove(file_to_del[0])
 
     return h5m_filename
-
-
-def paramak_to_h5m(
-    reactor,
-    h5m_filename="dagmc.h5m",
-    min_mesh_size=1,
-    max_mesh_size=10,  # reduce this number for an improved mesh
-    mesh_algorithm=1,
-):
-
-    temp_brep_filename = "reactor.brep"
-
-    # saves the reactor as a Brep file with merged surfaces
-    reactor.export_brep(temp_brep_filename)
-
-    # brep file is imported
-    my_brep_part_properties = bpf.get_brep_part_properties(temp_brep_filename)
-
-    # request to find part ids that are mixed up in the Brep file
-    # using the volume, center, bounding box that we know about when creating the
-    # CAD geometry in the first place
-    key_and_part_id = bpf.get_dict_of_part_ids(
-        brep_part_properties=my_brep_part_properties,
-        # part_properties method requires version great than 0.6.5 of the paramak
-        shape_properties=reactor.part_properties,
-    )
-
-    brep_to_h5m(
-        brep_filename=temp_brep_filename,
-        volumes_with_tags=key_and_part_id,
-        h5m_filename=h5m_filename,
-        min_mesh_size=min_mesh_size,
-        max_mesh_size=max_mesh_size,  # reduce this number for an improved mesh
-        mesh_algorithm=mesh_algorithm,
-    )
