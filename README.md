@@ -1,3 +1,5 @@
+[![CI with install](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/ci_with_install.yml/badge.svg)](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/ci_with_install.yml)
+
 # brep_to_h5m
 
 A Python package that converts Brep CAD geometry files to h5m geometry files compatible with DAGMC simulations.
