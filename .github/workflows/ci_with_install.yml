@@ -27,6 +27,7 @@ jobs:
           apt-get install ffmpeg libsm6 libxext6  -y
           conda install -c conda-forge gmsh
           conda install -c conda-forge python-gmsh
+          conda install -c conda-forge moab
           pip install .[tests]
 
       - name: Run test_utils
