@@ -44,6 +44,17 @@ def brep_to_h5m(
     gmsh.model.add("made_with_brep_to_h5m_package")
     volumes = gmsh.model.occ.importShapes(brep_filename)
     gmsh.model.occ.synchronize()
+
+    vols_in_brep = len(volumes)
+    vols_provided_by_user = len(volumes_with_tags.keys())
+
+    if vols_in_brep != vols_provided_by_user:
+        print(f'{vols_in_brep} volumes found in Brep file but only {vols_provided_by_user} volumes provided in volumes_with_tags argument.')
+
+    if vols_in_brep < vols_provided_by_user:
+        msg = f'The Brep file contains {vols_in_brep} volumes but {vols_provided_by_user} volumes are provided in the volumes_with_tags argument. Please reduce the number of volumes in volumes_with_tags'
+        raise ValueError(msg)
+
     gmsh.option.setNumber("Mesh.Algorithm", mesh_algorithm)
     gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
     gmsh.option.setNumber("Mesh.MeshSizeMax", max_mesh_size)
