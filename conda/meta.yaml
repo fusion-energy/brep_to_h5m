@@ -1,9 +1,8 @@
 {% set name = "brep_to_h5m" %}
-{% set version = "0.0.3" %}
 
 package:
   name: "{{ name|lower }}"
-  version: {{ version }}
+  version: {{ GIT_DESCRIBE_TAG }}
 
 source:
   path: ..
