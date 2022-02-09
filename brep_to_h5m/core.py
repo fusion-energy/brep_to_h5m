@@ -49,10 +49,12 @@ def brep_to_h5m(
     vols_provided_by_user = len(volumes_with_tags.keys())
 
     if vols_in_brep != vols_provided_by_user:
-        print(f'{vols_in_brep} volumes found in Brep file but only {vols_provided_by_user} volumes provided in volumes_with_tags argument.')
+        print(
+            f"{vols_in_brep} volumes found in Brep file but only {vols_provided_by_user} volumes provided in volumes_with_tags argument."
+        )
 
     if vols_in_brep < vols_provided_by_user:
-        msg = f'The Brep file contains {vols_in_brep} volumes but {vols_provided_by_user} volumes are provided in the volumes_with_tags argument. Please reduce the number of volumes in volumes_with_tags'
+        msg = f"The Brep file contains {vols_in_brep} volumes but {vols_provided_by_user} volumes are provided in the volumes_with_tags argument. Please reduce the number of volumes in volumes_with_tags"
         raise ValueError(msg)
 
     gmsh.option.setNumber("Mesh.Algorithm", mesh_algorithm)
