@@ -20,11 +20,11 @@ jobs:
       - name: Set up conda
         run: |
             conda install -y anaconda-client conda-build
-            conda config --set anaconda_upload yes
+            conda config --set anaconda_upload no
       - name: Build and publish to conda
         env:
           ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
         run: |
-            conda build conda -c conda-forge --config-file conda/conda_build_config.yaml
-            conda convert --platform osx-64
-            conda convert --platform win-64
+            conda build conda -c fusion-energy -c conda-forge --config-file conda/conda_build_config.yaml
+            conda convert fusion-energy/brep_to_h5m/0.2.1/linux-64/*.tar.bz2 --platform osx-64
+            anaconda upload -f fusion-energy/brep_to_h5m/0.2.1/linux-64/*.tar.bz2
