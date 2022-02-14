@@ -35,7 +35,8 @@ conda activate my_env
 Install dependancies that are not installed with pip ([MOAB](https://bitbucket.org/fathomteam/moab) and [GMSH](https://gmsh.info/))
 ```bash
 conda install -c conda-forge moab
-sudo apt install python3-gmsh
+conda install -c conda-forge gmsh
+conda install -c conda-forge python-gmsh
 ```
 
 Then install this package
