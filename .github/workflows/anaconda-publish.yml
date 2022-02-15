@@ -7,15 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: continuumio/miniconda3:4.10.3
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
 
       - name: Set up conda
         run: |
