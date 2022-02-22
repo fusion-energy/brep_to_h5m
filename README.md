@@ -1,4 +1,10 @@
+[![N|Python](https://www.python.org/static/community_logos/python-powered-w-100x40.png)](https://www.python.org)
+
 [![CI with install](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/ci_with_install.yml/badge.svg)](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/ci_with_install.yml)
+
+[![anaconda-publish](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/anaconda-publish.yml/badge.svg)](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/anaconda-publish.yml)
+[![Upload Python Package](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/python-publish.yml/badge.svg)](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/python-publish.yml)
+
 
 # brep_to_h5m
 

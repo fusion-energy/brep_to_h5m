@@ -16,7 +16,7 @@ requirements:
     - python {{ python }}
     - setuptools
   run:
-    - python
+    - python {{ python }}
     - trimesh
     - networkx
     - stl_to_h5m  # which brings in moab
