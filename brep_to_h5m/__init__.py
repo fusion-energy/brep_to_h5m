@@ -3,7 +3,7 @@ try:
 except (ModuleNotFoundError, ImportError):
     from importlib_metadata import version, PackageNotFoundError
 try:
-    __version__ = version("neutronics_material_maker")
+    __version__ = version("brep_to_h5m")
 except PackageNotFoundError:
     from setuptools_scm import get_version
 
