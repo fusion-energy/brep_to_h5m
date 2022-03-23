@@ -19,15 +19,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
+
       - name: install package
         run: |
-          apt update -y
           apt update -y
           apt-get install ffmpeg libsm6 libxext6  -y
           conda install -c conda-forge gmsh
           conda install -c conda-forge python-gmsh
           conda install -c conda-forge moab
+          pip install .
+          python -c "import brep_to_h5m"
+
+      - name: install package with tests
+        run: |
           pip install .[tests]
 
       - name: Run test_utils
