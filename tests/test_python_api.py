@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+import dagmc_h5m_file_inspector as di
 from brep_to_h5m import brep_to_h5m
 
 
@@ -71,4 +72,41 @@ class TestApiUsage:
         small_file = Path("test_brep_file_30.h5m").stat().st_size
         assert small_file < large_file
 
+
+    def test_h5m_file_tags(self):
+        """Checks that a h5m file is created with the correct tags"""
+
+        test_h5m_filename = "test_dagmc.h5m"
+        os.system(f"rm {test_h5m_filename}")
+        returned_filename = brep_to_h5m(
+            brep_filename="tests/test_brep_file.brep",
+            volumes_with_tags={
+                1: "mat1",
+                2: "mat2",
+                3: "mat3",
+                4: "mat4",
+                5: "mat5",
+                6: "mat6",
+            },
+            h5m_filename=f"{test_h5m_filename}",
+            min_mesh_size=30,
+            max_mesh_size=50,
+            mesh_algorithm=1,
+        )
+
+        assert Path(test_h5m_filename).is_file()
+        assert Path(returned_filename).is_file()
+        assert test_h5m_filename == returned_filename
+        assert di.get_volumes_from_h5m(test_h5m_filename) == [1, 2, 3, 4, 5, 6]
+        assert di.get_materials_from_h5m(test_h5m_filename) == ["mat1", "mat2", "mat3", "mat4", "mat5", "mat6"]
+        assert di.get_volumes_and_materials_from_h5m(test_h5m_filename) == {
+            1: "mat1",
+            2: "mat2",
+            3: "mat3",
+            4: "mat4",
+            5: "mat5",
+            6: "mat6",
+        }
+
     # TODO add tests to check 7 or more keys results in a value error
+    # because there are only 6 volumes
