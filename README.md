@@ -5,6 +5,8 @@
 [![anaconda-publish](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/anaconda-publish.yml/badge.svg)](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/anaconda-publish.yml)
 [![Upload Python Package](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/python-publish.yml/badge.svg)](https://github.com/fusion-energy/brep_to_h5m/actions/workflows/python-publish.yml)
 
+[![conda-publish](https://anaconda.org/fusion-energy/brep_to_h5m/badges/version.svg)](https://anaconda.org/fusion-energy/brep_to_h5m)
+[![PyPI](https://img.shields.io/pypi/v/brep-to-h5m?color=brightgreen&label=pypi&logo=grebrightgreenen&logoColor=green)](https://pypi.org/project/brep_to_h5m/)
 
 # brep_to_h5m
 

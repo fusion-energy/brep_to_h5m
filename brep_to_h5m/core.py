@@ -1,4 +1,6 @@
+import os
 import tempfile
+import warnings
 
 import gmsh
 import trimesh
@@ -14,7 +16,7 @@ def brep_to_h5m(
     mesh_algorithm: int = 1,
     write_stl_files_to_temp: bool = True,
     delete_intermediate_stl_files: bool = True,
-):
+) -> str:
     """Converts a Brep file into a DAGMC h5m file. This makes use of Gmsh and
     will therefore need to have Gmsh installed to work.
 
@@ -37,6 +39,8 @@ def brep_to_h5m(
             files produced will be deleted. If set the False the intermediate
             STL files will be left intact.
 
+    Returns:
+        The filename of the h5m file produced
     """
 
     gmsh.initialize()
@@ -49,9 +53,8 @@ def brep_to_h5m(
     vols_provided_by_user = len(volumes_with_tags.keys())
 
     if vols_in_brep != vols_provided_by_user:
-        print(
-            f"{vols_in_brep} volumes found in Brep file but only {vols_provided_by_user} volumes provided in volumes_with_tags argument."
-        )
+        msg = f"{vols_in_brep} volumes found in Brep file but only {vols_provided_by_user} volumes provided in volumes_with_tags argument."
+        warnings.warn(msg)
 
     if vols_in_brep < vols_provided_by_user:
         msg = f"The Brep file contains {vols_in_brep} volumes but {vols_provided_by_user} volumes are provided in the volumes_with_tags argument. Please reduce the number of volumes in volumes_with_tags"
@@ -83,21 +86,22 @@ def brep_to_h5m(
         vol_id = filename_vol_id[0]
         if vol_id in volumes_with_tags.keys():
             mesh = trimesh.load_mesh(filename)
-            print("file", filename, "is watertight", mesh.is_watertight)
+            if mesh.is_watertight is False:
+                msg = f"file {filename} is watertight"
+                warnings.warn(msg)
             trimesh.repair.fix_normals(
                 mesh
             )  # reqired as gmsh stl export from brep can get the inside outside mixed up
             new_filename = filename[:-4] + "_with_corrected_face_normals.stl"
             mesh.export(new_filename)
-            import os
 
             if delete_intermediate_stl_files:
                 os.remove(filename)  # deletes tmp stl file
             tag_name = volumes_with_tags[vol_id]
-            if not tag_name.startswith("mat_"):
+            if not tag_name.startswith("mat:"):
                 # TODO check if graveyard or mat_graveyard should be excluded
                 # and tag_name.lower!='graveyard':
-                tag_name = "mat_" + tag_name
+                tag_name = f"mat:{tag_name}"
             files_with_tags.append((new_filename, tag_name))
 
     stl_to_h5m(files_with_tags=files_with_tags, h5m_filename=h5m_filename)
