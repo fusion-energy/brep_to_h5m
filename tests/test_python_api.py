@@ -72,7 +72,6 @@ class TestApiUsage:
         small_file = Path("test_brep_file_30.h5m").stat().st_size
         assert small_file < large_file
 
-
     def test_h5m_file_tags(self):
         """Checks that a h5m file is created with the correct tags"""
 
@@ -98,7 +97,14 @@ class TestApiUsage:
         assert Path(returned_filename).is_file()
         assert test_h5m_filename == returned_filename
         assert di.get_volumes_from_h5m(test_h5m_filename) == [1, 2, 3, 4, 5, 6]
-        assert di.get_materials_from_h5m(test_h5m_filename) == ["mat1", "mat2", "mat3", "mat4", "mat5", "mat6"]
+        assert di.get_materials_from_h5m(test_h5m_filename) == [
+            "mat1",
+            "mat2",
+            "mat3",
+            "mat4",
+            "mat5",
+            "mat6",
+        ]
         assert di.get_volumes_and_materials_from_h5m(test_h5m_filename) == {
             1: "mat1",
             2: "mat2",
