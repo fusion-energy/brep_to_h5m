@@ -11,4 +11,4 @@ except PackageNotFoundError:
 
 __all__ = ["__version__"]
 
-from .core import brep_to_h5m
+from .core import brep_to_h5m, mesh_brep

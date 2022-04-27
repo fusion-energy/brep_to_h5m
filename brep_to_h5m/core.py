@@ -112,6 +112,29 @@ def mesh_brep(
     return gmsh, volumes
 
 
+def mesh_to_h5m_in_memory_method(
+    mesh,
+    volumes,
+    volumes_with_tags,
+    h5m_filename: str = "dagmc.h5m",
+):
+    
+
+    stl_filenames = []
+    for dim_and_vol in volumes:
+        vol_id = dim_and_vol[1]
+        entities_in_volume = gmsh.model.getAdjacencies(3, vol_id)
+        surfaces_in_volume = entities_in_volume[1]
+        ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
+        gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
+
+        # gmsh.write(tmp_filename)
+        
+        stl_filenames.append((vol_id, tmp_filename))
+        gmsh.model.removePhysicalGroups([])  # removes all groups
+    gmsh.finalize()
+
+    
 def mesh_to_h5m_stl_method(
     mesh,
     volumes,
@@ -166,7 +189,7 @@ def mesh_to_h5m_stl_method(
         filename = filename_vol_id[1]
         vol_id = filename_vol_id[0]
         if vol_id in volumes_with_tags.keys():
-            mesh = trimesh.load_mesh(filename)
+            mesh = trimesh.load_mesh(filename, file_type='stl')
             if mesh.is_watertight is False:
                 msg = f"file {filename} is watertight"
                 warnings.warn(msg)
