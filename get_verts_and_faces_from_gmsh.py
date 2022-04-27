@@ -18,13 +18,13 @@ from brep_to_h5m import mesh_brep
 #         },
 #     )
 
-brep_filename='test_two_cubes.brep'
-min_mesh_size=5
-max_mesh_size=10
-mesh_algorithm=1
-volumes_with_tags={
-    1:'vol1',
-    2:'vol2',
+brep_filename = "test_two_cubes.brep"
+min_mesh_size = 5
+max_mesh_size = 10
+mesh_algorithm = 1
+volumes_with_tags = {
+    1: "vol1",
+    2: "vol2",
 }
 
 gmsh.initialize()
@@ -48,22 +48,22 @@ gmsh.option.setNumber("Mesh.Algorithm", mesh_algorithm)
 gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
 gmsh.option.setNumber("Mesh.MeshSizeMax", max_mesh_size)
 gmsh.model.mesh.generate(2)
-    
+
 
 stl_filenames = []
 for dim_and_vol in volumes:
     vol_id = dim_and_vol[1]
-    print('vol_id',vol_id)
+    print("vol_id", vol_id)
     entities_in_volume = gmsh.model.getAdjacencies(3, vol_id)
     surfaces_in_volume = entities_in_volume[1]
     ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
     gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
-    nodeTags, coords=gmsh.model.mesh.getNodesForPhysicalGroup(dim=2,tag=vol_id)
-    n=3
-    GroupednodeTags=[nodeTags[i:i+n] for i in range(0, len(nodeTags), n)]
-    print('  nodeTags', nodeTags)
-    print('  coords', coords)
-    new_trimesh_object=trimesh.Trimesh(vertices=coords,faces=GroupednodeTags)
+    nodeTags, coords = gmsh.model.mesh.getNodesForPhysicalGroup(dim=2, tag=vol_id)
+    n = 3
+    GroupednodeTags = [nodeTags[i : i + n] for i in range(0, len(nodeTags), n)]
+    print("  nodeTags", nodeTags)
+    print("  coords", coords)
+    new_trimesh_object = trimesh.Trimesh(vertices=coords, faces=GroupednodeTags)
     # e=gmsh.model.getEntitiesForPhysicalGroup(dim=2, tag=1)
     # print('e',e)
     # elementTags, elementNodeTags = gmsh.model.mesh.getElementsByType(3)
@@ -76,4 +76,3 @@ for dim_and_vol in volumes:
     # stl_filenames.append((vol_id, verts, faces))
     gmsh.model.removePhysicalGroups([])  # removes all groups
 gmsh.finalize()
-
