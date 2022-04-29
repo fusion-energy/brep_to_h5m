@@ -79,11 +79,10 @@ for dim_and_vol in volumes:
     #     print(f'node id {node_id} {gmsh.model.mesh.getNode(node_id)[0]}')
 
     nodeTags, coords = gmsh.model.mesh.getNodesForPhysicalGroup(dim=2, tag=vol_id)
-    Groupedcoords = [list(coords)[i: i + n] for i in range(0, len(coords), n)]
-
+    Groupedcoords = [list(coords)[i : i + n] for i in range(0, len(coords), n)]
 
     # GroupednodeTags = [list(nodeTags)[i : i + n] for i in range(0, len(nodeTags), n)]
-    Groupednodes = [list(node_ids)[i: i + n] for i in range(0, len(node_ids), n)]
+    Groupednodes = [list(node_ids)[i : i + n] for i in range(0, len(node_ids), n)]
     # Groupedelements = [list(all_elements)[i : i + n] for i in range(0, len(coords), n)]
     print("  nodeTags", nodeTags)
     print("  coords", coords)
@@ -104,7 +103,7 @@ for dim_and_vol in volumes:
     gmsh.model.removePhysicalGroups([])  # removes all groups
 # gmsh.finalize()
 
-#example
+# example
 # import numpy as np
 # import trimesh
 # corners = np.array([
