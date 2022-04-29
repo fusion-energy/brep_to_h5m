@@ -49,6 +49,17 @@ gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
 gmsh.option.setNumber("Mesh.MeshSizeMax", max_mesh_size)
 gmsh.model.mesh.generate(2)
 
+# todo add Physical group before meshing
+n = 3
+# all_coords = gmsh.model.mesh.getNodes()[1]
+# AllGroupedcoords = [list(all_coords)[i: i + n] for i in range(0, len(all_coords), n)]
+
+all_coords = []
+for node_id in range(1, 63):
+    coords = gmsh.model.mesh.getNode(node_id)[0]
+    # print(f'node id {node_id} {}')
+    all_coords.append(coords)
+AllGroupedcoords = all_coords
 
 stl_filenames = []
 for dim_and_vol in volumes:
@@ -58,12 +69,28 @@ for dim_and_vol in volumes:
     surfaces_in_volume = entities_in_volume[1]
     ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
     gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
+
+    # element_ids is equivalent to face ids
+    types, element_ids, node_ids = gmsh.model.mesh.getElements(dim=2, tag=vol_id)
+    node_ids = node_ids[0]
+    element_ids = element_ids[0]
+
+    # for node_id in node_ids:
+    #     print(f'node id {node_id} {gmsh.model.mesh.getNode(node_id)[0]}')
+
     nodeTags, coords = gmsh.model.mesh.getNodesForPhysicalGroup(dim=2, tag=vol_id)
-    n = 3
-    GroupednodeTags = [nodeTags[i : i + n] for i in range(0, len(nodeTags), n)]
+    Groupedcoords = [list(coords)[i: i + n] for i in range(0, len(coords), n)]
+
+
+    # GroupednodeTags = [list(nodeTags)[i : i + n] for i in range(0, len(nodeTags), n)]
+    Groupednodes = [list(node_ids)[i: i + n] for i in range(0, len(node_ids), n)]
+    # Groupedelements = [list(all_elements)[i : i + n] for i in range(0, len(coords), n)]
     print("  nodeTags", nodeTags)
     print("  coords", coords)
-    new_trimesh_object = trimesh.Trimesh(vertices=coords, faces=GroupednodeTags)
+    # print("  GroupednodeTags", GroupednodeTags)
+    print("  Groupedcoords", Groupedcoords)
+    mesh = trimesh.Trimesh(vertices=AllGroupedcoords, faces=Groupednodes)
+    # mesh.show()
     # e=gmsh.model.getEntitiesForPhysicalGroup(dim=2, tag=1)
     # print('e',e)
     # elementTags, elementNodeTags = gmsh.model.mesh.getElementsByType(3)
@@ -75,4 +102,22 @@ for dim_and_vol in volumes:
     # gmsh.write(tmp_filename)
     # stl_filenames.append((vol_id, verts, faces))
     gmsh.model.removePhysicalGroups([])  # removes all groups
-gmsh.finalize()
+# gmsh.finalize()
+
+#example
+# import numpy as np
+# import trimesh
+# corners = np.array([
+#         [0, 0, 0],
+#         [0, 0, 1],
+#         [0, 1, 0],
+#         [0, 1, 1],
+#         [1, 0, 0],
+#         [1, 0, 1],
+#         [1, 1, 0],
+#         [1, 1, 1]
+#     ])
+# mesh = trimesh.Trimesh(
+#         vertices=corners,
+#         faces=[[0, 1, 2], [2, 3, 4], [4, 5, 6], [6, 7, 0]])
+# mesh.show()
