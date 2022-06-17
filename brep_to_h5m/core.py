@@ -38,9 +38,53 @@ def brep_to_h5m(
         delete_intermediate_stl_files: If set to True the intermediate STL
             files produced will be deleted. If set the False the intermediate
             STL files will be left intact.
-
     Returns:
         The filename of the h5m file produced
+    """
+
+    gmsh, volumes = mesh_brep(
+        brep_filename=brep_filename,
+        min_mesh_size=min_mesh_size,
+        max_mesh_size=max_mesh_size,
+        mesh_algorithm=mesh_algorithm,
+        volumes_with_tags=volumes_with_tags,
+    )
+
+    h5m_filename = mesh_to_h5m_stl_method(
+        mesh=gmsh,
+        volumes=volumes,
+        volumes_with_tags=volumes_with_tags,
+        h5m_filename=h5m_filename,
+        write_stl_files_to_temp=write_stl_files_to_temp,
+        delete_intermediate_stl_files=delete_intermediate_stl_files,
+    )
+
+    return h5m_filename
+
+
+def mesh_brep(
+    brep_filename: str,
+    volumes_with_tags: dict,
+    min_mesh_size: int = 30,
+    max_mesh_size: int = 10,
+    mesh_algorithm: int = 1,
+):
+    """Converts a Brep file into a DAGMC h5m file. This makes use of Gmsh and
+    will therefore need to have Gmsh installed to work.
+
+    Args:
+        brep_filename: the filename of the Brep file to convert
+        volumes_with_tags: a dictionary with volume numbers as the keys and
+            the tag names to use in DAGMC as te values.
+        min_mesh_size: the minimum mesh element size to use in Gmsh. Passed
+            into gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
+        max_mesh_size: the maximum mesh element size to use in Gmsh. Passed
+            into gmsh.option.setNumber("Mesh.MeshSizeMax", max_mesh_size)
+        mesh_algorithm: The Gmsh mesh algorithm number to use. Passed into
+            gmsh.option.setNumber("Mesh.Algorithm", mesh_algorithm)
+
+    Returns:
+        The gmsh object and volumes in Brep file
     """
 
     gmsh.initialize()
@@ -64,6 +108,43 @@ def brep_to_h5m(
     gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
     gmsh.option.setNumber("Mesh.MeshSizeMax", max_mesh_size)
     gmsh.model.mesh.generate(2)
+
+    return gmsh, volumes
+
+
+def mesh_to_h5m_stl_method(
+    mesh,
+    volumes,
+    volumes_with_tags,
+    h5m_filename: str = "dagmc.h5m",
+    write_stl_files_to_temp: bool = True,
+    delete_intermediate_stl_files: bool = True,
+) -> str:
+    """Converts a Brep file into a DAGMC h5m file. This makes use of Gmsh and
+    will therefore need to have Gmsh installed to work.
+
+    Args:
+        mesh: the gmsh mesh object
+        volumes: the volumes in the gmsh file, found with gmsh.model.occ.importShapes
+        h5m_filename: the filename of the DAGMC h5m file to write
+        write_stl_files_to_temp: If set to True the intermediate STL files
+            required will be written to the opperating systems temporary file
+            folder. If set to False the STL files will be written to the
+            current working directory.
+        delete_intermediate_stl_files: If set to True the intermediate STL
+            files produced will be deleted. If set the False the intermediate
+            STL files will be left intact.
+        write_stl_files_to_temp: If set to True the intermediate STL files
+            required will be written to the opperating systems temporary file
+            folder. If set to False the STL files will be written to the
+            current working directory.
+        delete_intermediate_stl_files: If set to True the intermediate STL
+            files produced will be deleted. If set the False the intermediate
+            STL files will be left intact.
+    Returns:
+        The filename of the h5m file produced
+    """
+
     stl_filenames = []
     for dim_and_vol in volumes:
         vol_id = dim_and_vol[1]
