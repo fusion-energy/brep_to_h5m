@@ -128,7 +128,12 @@ for three_coord_face in coords:
 
     triangle = moab_core.create_element(types.MBTRI, verts)
 
+
     group_set = moab_core.create_meshset()
+    for vert in verts:
+        moab_core.add_entity(surface_set, vert)
+
+    moab_core.add_entity(surface_set, triangle)
 
     moab_core.tag_set_data(tags["category"], group_set, "Group")
 
