@@ -94,54 +94,59 @@ moab_core.tag_set_data(tags["surf_sense"], surface_set, sense_data)
 
 #######
 
-# coordinates of the first volume
-coords = np.array(
-    [
-        [
-            [0, 0, 0],
-            [1, 0, 0],
-            [0, 1, 0],  # bottom face
-        ],
-        [
-            [0, 0, 1],
-            [1, 0, 0],
-            [0, 1, 0],  # front face
-        ],
-        [
-            [0, 0, 0],
-            [0, 1, 0],
-            [0, 0, 1],  # back face
-        ],
-        [
-            [0, 0, 0],
-            [1, 0, 0],
-            [0, 0, 1],  # left face
-        ],
+
+# a list of xyz coordinates
+vertices = np.array([
+    [0, 0, 0],
+    [1, 0, 0],
+    [0, 1, 0],  
+    [0, 0, 1],  
     ],
     dtype="float64",
 )
 
+# the index of the coordinate that make up the corner of a triangle
+triangles = np.array([
+        [0,1,2],
+        [3,1,2],
+        [0,2,3],
+        [0,1,3]
+    ]
+)
 
-for three_coord_face in coords:
-    print("adding ", three_coord_face, "to moab")
-    verts = moab_core.create_vertices(three_coord_face)
 
-    triangle = moab_core.create_element(types.MBTRI, verts)
+moab_verts = moab_core.create_vertices(vertices)
 
+moab_core.add_entity(surface_set, moab_verts)
 
-    group_set = moab_core.create_meshset()
-    for vert in verts:
-        moab_core.add_entity(surface_set, vert)
+print('moab_verts', moab_verts)
 
-    moab_core.add_entity(surface_set, triangle)
+for triangle in triangles:
+    print("adding triangle ", triangle, "to moab")
 
-    moab_core.tag_set_data(tags["category"], group_set, "Group")
+    tri = (
+            moab_verts[int(triangle[0])],
+            moab_verts[int(triangle[1])],
+            moab_verts[int(triangle[2])]
+        )
 
-    moab_core.tag_set_data(tags["name"], group_set, "mat:dag_material_tag")
+    print(tri)
 
-    moab_core.tag_set_data(tags["geom_dimension"], group_set, 4)
+    moab_triangle = moab_core.create_element(types.MBTRI, tri)
+    moab_core.add_entity(surface_set, moab_triangle)
 
-    moab_core.add_entity(group_set, volume_set)
+print('moab_triangle', moab_triangle)
+
+group_set = moab_core.create_meshset()
+
+moab_core.tag_set_data(tags["category"], group_set, "Group")
+
+moab_core.tag_set_data(tags["name"], group_set, "mat:dag_material_tag")
+
+moab_core.tag_set_data(tags["geom_dimension"], group_set, 4)
+
+moab_core.add_entity(group_set, volume_set)
+
 
 
 all_sets = moab_core.get_entities_by_handle(0)
