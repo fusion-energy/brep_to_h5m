@@ -1,7 +1,7 @@
-
 import openmc
 import openmc_data_downloader as odd
 import math
+
 # simplified material definitions have been used to keen this example minimal
 mat_dag_material_tag = openmc.Material(name="dag_material_tag")
 mat_dag_material_tag.add_element("H", 1, "ao")
@@ -55,7 +55,11 @@ cell_tally.scores = ["heating"]
 # creates a mesh that covers the geometry
 mesh = openmc.RegularMesh()
 mesh.dimension = [100, 100, 100]
-mesh.lower_left = [-10, -10, -10]  # x,y,z coordinates start at 0 as this is a sector model
+mesh.lower_left = [
+    -10,
+    -10,
+    -10,
+]  # x,y,z coordinates start at 0 as this is a sector model
 mesh.upper_right = [10, 10, 10]
 
 # makes a mesh tally using the previously created mesh and records heating on the mesh
@@ -68,8 +72,9 @@ mesh_tally.scores = ["heating"]
 tallies = openmc.Tallies([cell_tally, mesh_tally])
 
 # builds the openmc model
-my_model = openmc.Model(materials=materials, geometry=geometry, settings=settings, tallies=tallies)
+my_model = openmc.Model(
+    materials=materials, geometry=geometry, settings=settings, tallies=tallies
+)
 
 # starts the simulation
 my_model.run()
-
