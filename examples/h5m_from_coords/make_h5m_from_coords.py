@@ -1,4 +1,3 @@
-
 import numpy as np
 import gmsh
 import trimesh
@@ -60,8 +59,6 @@ def _define_moab_core_and_tags() -> Tuple[core.Core, dict]:
     return moab_core, tags
 
 
-
-
 moab_core, tags = _define_moab_core_and_tags()
 
 
@@ -98,38 +95,48 @@ moab_core.tag_set_data(tags["surf_sense"], surface_set, sense_data)
 #######
 
 # coordinates of the first volume
-coords = np.array([
+coords = np.array(
     [
-            [0,0,0], [1,0,0], [0,1,0],  # bottom face 
+        [
+            [0, 0, 0],
+            [1, 0, 0],
+            [0, 1, 0],  # bottom face
+        ],
+        [
+            [0, 0, 1],
+            [1, 0, 0],
+            [0, 1, 0],  # front face
+        ],
+        [
+            [0, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1],  # back face
+        ],
+        [
+            [0, 0, 0],
+            [1, 0, 0],
+            [0, 0, 1],  # left face
+        ],
     ],
-    [
-            [0,0,1], [1,0,0], [0,1,0],  # front face
-    ],
-    [
-            [0,0,0], [0,1,0], [0,0,1],  # back face
-    ],
-    [
-            [0,0,0], [1,0,0], [0,0,1],  # left face
-    ],
-    ], dtype='float64')
+    dtype="float64",
+)
 
 
 for three_coord_face in coords:
-    print('adding ', three_coord_face, 'to moab')
+    print("adding ", three_coord_face, "to moab")
     verts = moab_core.create_vertices(three_coord_face)
 
-    triangle = moab_core.create_element(types.MBTRI,verts)
+    triangle = moab_core.create_element(types.MBTRI, verts)
 
     group_set = moab_core.create_meshset()
 
     moab_core.tag_set_data(tags["category"], group_set, "Group")
 
-    moab_core.tag_set_data(tags["name"], group_set, 'mat:dag_material_tag')
+    moab_core.tag_set_data(tags["name"], group_set, "mat:dag_material_tag")
 
     moab_core.tag_set_data(tags["geom_dimension"], group_set, 4)
 
     moab_core.add_entity(group_set, volume_set)
-
 
 
 all_sets = moab_core.get_entities_by_handle(0)
@@ -138,4 +145,4 @@ file_set = moab_core.create_meshset()
 
 moab_core.add_entities(file_set, all_sets)
 
-moab_core.write_file('dagmc_from_coords.h5m')
+moab_core.write_file("dagmc_from_coords.h5m")
