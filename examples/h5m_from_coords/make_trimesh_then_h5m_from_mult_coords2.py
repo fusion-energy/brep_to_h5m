@@ -106,40 +106,40 @@ def _define_moab_core_and_tags() -> Tuple[core.Core, dict]:
 
 moab_core, tags = _define_moab_core_and_tags()
 
+def prepare_moab_core(
+    moab_core,
+    surface_id = 1,
+    volume_id = 1,
+):
 
-surface_id = 1
-volume_id = 1
+    surface_set = moab_core.create_meshset()
+    volume_set = moab_core.create_meshset()
 
-# this will need repeating for every volume in the dagmc model
-# with different volume surface ids
-######### repeat this section
-surface_set = moab_core.create_meshset()
-volume_set = moab_core.create_meshset()
+    # recent versions of MOAB handle this automatically
+    # but best to go ahead and do it manually
+    moab_core.tag_set_data(tags["global_id"], volume_set, volume_id)
 
-# recent versions of MOAB handle this automatically
-# but best to go ahead and do it manually
-moab_core.tag_set_data(tags["global_id"], volume_set, volume_id)
+    moab_core.tag_set_data(tags["global_id"], surface_set, surface_id)
 
-moab_core.tag_set_data(tags["global_id"], surface_set, surface_id)
+    # set geom IDs
+    moab_core.tag_set_data(tags["geom_dimension"], volume_set, 3)
+    moab_core.tag_set_data(tags["geom_dimension"], surface_set, 2)
 
-# set geom IDs
-moab_core.tag_set_data(tags["geom_dimension"], volume_set, 3)
-moab_core.tag_set_data(tags["geom_dimension"], surface_set, 2)
+    # set category tag values
+    moab_core.tag_set_data(tags["category"], volume_set, "Volume")
+    moab_core.tag_set_data(tags["category"], surface_set, "Surface")
 
-# set category tag values
-moab_core.tag_set_data(tags["category"], volume_set, "Volume")
-moab_core.tag_set_data(tags["category"], surface_set, "Surface")
+    # establish parent-child relationship
+    moab_core.add_parent_child(volume_set, surface_set)
 
-# establish parent-child relationship
-moab_core.add_parent_child(volume_set, surface_set)
+    # set surface sense
+    sense_data = [volume_set, np.uint64(0)]
+    moab_core.tag_set_data(tags["surf_sense"], surface_set, sense_data)
 
-# set surface sense
-sense_data = [volume_set, np.uint64(0)]
-moab_core.tag_set_data(tags["surf_sense"], surface_set, sense_data)
+    return moab_core, surface_set, volume_set
 
-#######
 
-def add_verticles_to_moab_core(vertices, surface_set):
+def add_vertices_to_moab_core(moab_core,vertices, surface_set):
 
     moab_verts = moab_core.create_vertices(vertices)
 
@@ -172,8 +172,9 @@ def add_triangles_to_moab_core(triangles, moab_verts, volume_set):
     return moab_core
 
 
+moab_core, surface_set, volume_set=prepare_moab_core(moab_core)
 
-moab_core, moab_verts = add_verticles_to_moab_core(vertices, surface_set)
+moab_core, moab_verts = add_vertices_to_moab_core(moab_core,vertices, surface_set)
 
 moab_core = add_triangles_to_moab_core(triangles, moab_verts, volume_set)
 
