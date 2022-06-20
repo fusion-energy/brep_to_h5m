@@ -6,8 +6,6 @@ import trimesh
 from pymoab import core, types
 
 
-
-
 def _define_moab_core_and_tags() -> Tuple[core.Core, dict]:
     """Creates a MOAB Core instance which can be built up by adding sets of
     triangles to the instance
@@ -64,8 +62,8 @@ def _define_moab_core_and_tags() -> Tuple[core.Core, dict]:
 
 def prepare_moab_core(
     moab_core,
-    surface_id = 1,
-    volume_id = 1,
+    surface_id=1,
+    volume_id=1,
 ):
 
     surface_set = moab_core.create_meshset()
@@ -94,16 +92,15 @@ def prepare_moab_core(
 
     return moab_core, surface_set, volume_set
 
+
 def fix_sense(triangles, vertices):
-    mesh = trimesh.Trimesh(
-        vertices=vertices,
-        faces=triangles
-    )
+    mesh = trimesh.Trimesh(vertices=vertices, faces=triangles)
 
     mesh.fix_normals()
 
     triangles = mesh.faces
     return triangles
+
 
 def add_vertices_to_moab_core(moab_core, vertices):
 
@@ -113,22 +110,22 @@ def add_vertices_to_moab_core(moab_core, vertices):
 
     return moab_core, moab_verts
 
+
 def add_triangles_to_moab_core(
-    moab_core, moab_verts, volume_set, triangles,
-    mat_tag='mat:dag_material_tag'):
+    moab_core, moab_verts, volume_set, triangles, mat_tag="mat:dag_material_tag"
+):
 
     for triangle in triangles:
         print("adding triangle ", triangle, "to moab")
 
     tri = (
-            moab_verts[int(triangle[0])],
-            moab_verts[int(triangle[1])],
-            moab_verts[int(triangle[2])]
-        )
+        moab_verts[int(triangle[0])],
+        moab_verts[int(triangle[1])],
+        moab_verts[int(triangle[2])],
+    )
 
     moab_triangle = moab_core.create_element(types.MBTRI, tri)
     moab_core.add_entity(surface_set, moab_triangle)
-
 
     group_set = moab_core.create_meshset()
 
@@ -142,38 +139,36 @@ def add_triangles_to_moab_core(
 
     return moab_core
 
+
 moab_core, tags = _define_moab_core_and_tags()
 
 moab_core, surface_set, volume_set = prepare_moab_core(moab_core)
 
 
 # a list of xyz coordinates
-vertices = np.array([
-    [0, 0, 0],
-    [1, 0, 0],
-    [0, 1, 0],  
-    [0, 0, 1],  
+vertices = np.array(
+    [
+        [0, 0, 0],
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
     ],
     dtype="float64",
 )
 
 # the index of the coordinate that make up the corner of a triangle
-triangles = np.array([
-        [0,1,2],
-        [3,1,2],
-        [0,2,3],
-        [0,1,3]
-    ]
-)
+triangles = np.array([[0, 1, 2], [3, 1, 2], [0, 2, 3], [0, 1, 3]])
 triangles = fix_sense(triangles, vertices)
 
 moab_core, moab_verts = add_vertices_to_moab_core(moab_core, vertices)
 
 
 moab_core = add_triangles_to_moab_core(
-    moab_core=moab_core, moab_verts=moab_verts, volume_set=volume_set, 
+    moab_core=moab_core,
+    moab_verts=moab_verts,
+    volume_set=volume_set,
     triangles=triangles,
-    mat_tag='mat:dag_material_tag'
+    mat_tag="mat:dag_material_tag",
 )
 
 all_sets = moab_core.get_entities_by_handle(0)
