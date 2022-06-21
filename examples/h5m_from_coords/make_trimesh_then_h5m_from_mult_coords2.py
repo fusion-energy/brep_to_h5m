@@ -10,15 +10,12 @@ from pymoab import core, types
 import numpy as np
 import trimesh
 
+
 def fix_normals(vertices, triangles):
 
-    mesh = trimesh.Trimesh(
-        vertices=vertices,
-        faces=triangles
-    )
+    mesh = trimesh.Trimesh(vertices=vertices, faces=triangles)
 
     mesh.fix_normals()
-
 
     triangles = mesh.faces
 
@@ -26,28 +23,20 @@ def fix_normals(vertices, triangles):
 
 
 # a list of xyz coordinates
-vertices = np.array([
-    [0, 0, 0],
-    [1, 0, 0],
-    [0, 1, 0],  
-    [0, 0, 1],  
+vertices = np.array(
+    [
+        [0, 0, 0],
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
     ],
     dtype="float64",
 )
 
 # the index of the coordinate that make up the corner of a triangle
-triangles = np.array([
-        [0,1,2],
-        [3,1,2],
-        [0,2,3],
-        [0,1,3]
-    ]
-)
+triangles = np.array([[0, 1, 2], [3, 1, 2], [0, 2, 3], [0, 1, 3]])
 
-triangles= fix_normals(vertices=vertices,triangles=triangles )
-
-
-
+triangles = fix_normals(vertices=vertices, triangles=triangles)
 
 
 def _define_moab_core_and_tags() -> Tuple[core.Core, dict]:
@@ -106,10 +95,11 @@ def _define_moab_core_and_tags() -> Tuple[core.Core, dict]:
 
 moab_core, tags = _define_moab_core_and_tags()
 
+
 def prepare_moab_core(
     moab_core,
-    surface_id = 1,
-    volume_id = 1,
+    surface_id=1,
+    volume_id=1,
 ):
 
     surface_set = moab_core.create_meshset()
@@ -139,7 +129,7 @@ def prepare_moab_core(
     return moab_core, surface_set, volume_set
 
 
-def add_vertices_to_moab_core(moab_core,vertices, surface_set):
+def add_vertices_to_moab_core(moab_core, vertices, surface_set):
 
     moab_verts = moab_core.create_vertices(vertices)
 
@@ -151,10 +141,10 @@ def add_triangles_to_moab_core(triangles, moab_verts, volume_set):
     for triangle in triangles:
 
         tri = (
-                moab_verts[int(triangle[0])],
-                moab_verts[int(triangle[1])],
-                moab_verts[int(triangle[2])]
-            )
+            moab_verts[int(triangle[0])],
+            moab_verts[int(triangle[1])],
+            moab_verts[int(triangle[2])],
+        )
 
         moab_triangle = moab_core.create_element(types.MBTRI, tri)
         moab_core.add_entity(surface_set, moab_triangle)
@@ -172,12 +162,11 @@ def add_triangles_to_moab_core(triangles, moab_verts, volume_set):
     return moab_core
 
 
-moab_core, surface_set, volume_set=prepare_moab_core(moab_core)
+moab_core, surface_set, volume_set = prepare_moab_core(moab_core)
 
-moab_core, moab_verts = add_vertices_to_moab_core(moab_core,vertices, surface_set)
+moab_core, moab_verts = add_vertices_to_moab_core(moab_core, vertices, surface_set)
 
 moab_core = add_triangles_to_moab_core(triangles, moab_verts, volume_set)
-
 
 
 all_sets = moab_core.get_entities_by_handle(0)
