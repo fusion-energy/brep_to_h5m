@@ -6,7 +6,6 @@ import gmsh
 import trimesh
 
 
-
 brep_filename = "single_cube.brep"
 min_mesh_size = 5
 max_mesh_size = 10
@@ -46,7 +45,7 @@ all_coords = gmsh.model.mesh.getNodes()[1]
 print(all_coords)
 types, element_ids, node_ids_in_volumes = gmsh.model.mesh.getElements(dim=2)
 
-node_ids = node_ids_in_volumes[0] # just volume 0
+node_ids = node_ids_in_volumes[0]  # just volume 0
 
-all_coords.reshape(int(len(all_coords)/3),3)
-node_ids.reshape(int(len(node_id)/3),3)
+all_coords.reshape(int(len(all_coords) / 3), 3)
+node_ids.reshape(int(len(node_id) / 3), 3)
