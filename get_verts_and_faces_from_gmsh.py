@@ -5,6 +5,7 @@ import warnings
 
 import gmsh
 import trimesh
+
 # from vertices_to_h5m import vertices_to_h5m
 # from brep_to_h5m import messh_brep
 
@@ -53,7 +54,7 @@ gmsh.model.mesh.generate(2)
 
 all_coords = []
 stl_filenames = []
-all_tris=[]
+all_tris = []
 for dim_and_vol in volumes:
     vol_id = dim_and_vol[1]
     print("vol_id", vol_id)
@@ -62,22 +63,22 @@ for dim_and_vol in volumes:
     ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
     gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
 
-    nodeTagsOrg, coords=gmsh.model.mesh.getNodesForPhysicalGroup(dim=2,tag=vol_id)
-    n=3
-    coords= coords.tolist()
+    nodeTagsOrg, coords = gmsh.model.mesh.getNodesForPhysicalGroup(dim=2, tag=vol_id)
+    n = 3
+    coords = coords.tolist()
     nodeTags = []
     for tag in nodeTagsOrg:
-        tag=tag-1
+        tag = tag - 1
         nodeTags.append(int(tag))
-    GroupednodeTags=[nodeTags[i:i+n] for i in range(0, len(nodeTags), n)]
-    
-    GroupednCoords=[coords[i:i+n] for i in range(0, len(coords), n)]
+    GroupednodeTags = [nodeTags[i : i + n] for i in range(0, len(nodeTags), n)]
+
+    GroupednCoords = [coords[i : i + n] for i in range(0, len(coords), n)]
     # print('  nodeTags', nodeTags)
     # print('  GroupednodeTags', GroupednodeTags)
     # print('  coords', coords)
-    new_trimesh_object=trimesh.Trimesh(vertices=coords,faces=GroupednodeTags)
+    new_trimesh_object = trimesh.Trimesh(vertices=coords, faces=GroupednodeTags)
     # new_trimesh_object.show()
-    # trimesh.repair.fix_normals(new_trimesh_object) 
+    # trimesh.repair.fix_normals(new_trimesh_object)
 
     # e=gmsh.model.getEntitiesForPhysicalGroup(dim=2, tag=1)
     # print('e',e)
@@ -93,12 +94,12 @@ for dim_and_vol in volumes:
     # gmsh.model.removePhysicalGroups([])  # removes all groups
     all_coords = all_coords + GroupednCoords
     all_tris.append(GroupednodeTags)
-    
+
 gmsh.finalize()
 
 
-print('all_tris',all_tris)
-print('all_coords',all_coords)
+print("all_tris", all_tris)
+print("all_coords", all_coords)
 
 # from vertices_to_h5m import vertices_to_h5m
 # import numpy as np
@@ -119,4 +120,3 @@ print('all_coords',all_coords)
 # )
 
 # os.system("mbconvert two_volume_touching_edge.h5m two_volume_touching_edge.vtk")
-
