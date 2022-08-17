@@ -20,13 +20,13 @@ import trimesh
 #         },
 #     )
 
-brep_filename='test_two_cubes.brep'
-min_mesh_size=5
-max_mesh_size=10
-mesh_algorithm=1
-volumes_with_tags={
-    1:'vol1',
-    2:'vol2',
+brep_filename = "test_two_cubes.brep"
+min_mesh_size = 5
+max_mesh_size = 10
+mesh_algorithm = 1
+volumes_with_tags = {
+    1: "vol1",
+    2: "vol2",
 }
 
 gmsh.initialize()
@@ -56,11 +56,12 @@ stl_filenames = []
 all_tris=[]
 for dim_and_vol in volumes:
     vol_id = dim_and_vol[1]
-    print('vol_id',vol_id)
+    print("vol_id", vol_id)
     entities_in_volume = gmsh.model.getAdjacencies(3, vol_id)
     surfaces_in_volume = entities_in_volume[1]
     ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
     gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
+
     nodeTagsOrg, coords=gmsh.model.mesh.getNodesForPhysicalGroup(dim=2,tag=vol_id)
     n=3
     coords= coords.tolist()
@@ -77,6 +78,7 @@ for dim_and_vol in volumes:
     new_trimesh_object=trimesh.Trimesh(vertices=coords,faces=GroupednodeTags)
     # new_trimesh_object.show()
     # trimesh.repair.fix_normals(new_trimesh_object) 
+
     # e=gmsh.model.getEntitiesForPhysicalGroup(dim=2, tag=1)
     # print('e',e)
     # elementTags, elementNodeTags = gmsh.model.mesh.getElementsByType(3)
@@ -87,6 +89,7 @@ for dim_and_vol in volumes:
     # gmsh.model.mesh.getElementsByCoordinates(x=coords[0], y=coords[1],z=coords[2])?
     # gmsh.write(tmp_filename)
     # stl_filenames.append((vol_id, verts, faces))
+
     # gmsh.model.removePhysicalGroups([])  # removes all groups
     all_coords = all_coords + GroupednCoords
     all_tris.append(GroupednodeTags)
@@ -116,5 +119,4 @@ print('all_coords',all_coords)
 # )
 
 # os.system("mbconvert two_volume_touching_edge.h5m two_volume_touching_edge.vtk")
-
 
