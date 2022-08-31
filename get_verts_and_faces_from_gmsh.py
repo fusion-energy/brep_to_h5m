@@ -7,8 +7,9 @@ import io
 import plotly.graph_objects as go
 import numpy as np
 
+
 def deserialize(filename):
-    with open(filename, 'r') as file:
+    with open(filename, "r") as file:
         mesh_str = file.read()
     mesh_ply_file_obj = io.BytesIO(mesh_str)
     mesh = trimesh.Trimesh(**trimesh.exchange.ply.load_ply(mesh_ply_file_obj))
@@ -40,24 +41,26 @@ all_tris = []
 n = 3
 
 # for dim_and_vol in volumes:
-    # vol_id = dim_and_vol[1]
-    # print("vol_id", vol_id)
-    # entities_in_volume = gmsh.model.getAdjacencies(3, vol_id)
-    # surfaces_in_volume = entities_in_volume[1]
-    # ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
-    # print("surfaces_in_volume", surfaces_in_volume)
-    # gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
+# vol_id = dim_and_vol[1]
+# print("vol_id", vol_id)
+# entities_in_volume = gmsh.model.getAdjacencies(3, vol_id)
+# surfaces_in_volume = entities_in_volume[1]
+# ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
+# print("surfaces_in_volume", surfaces_in_volume)
+# gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
 
 # for dim_and_vol in volumes:
-    # vol_id = dim_and_vol[1]
-    # nodeTagsOrg, coords = gmsh.model.mesh.getNodesForPhysicalGroup(dim=2, tag=vol_id)
+# vol_id = dim_and_vol[1]
+# nodeTagsOrg, coords = gmsh.model.mesh.getNodesForPhysicalGroup(dim=2, tag=vol_id)
 
 gmsh.write("t20.msh")
-trimesh_object = trimesh.load("t20.msh", process=False) #trimesh.interfaces.gmsh.load_gmsh
+trimesh_object = trimesh.load(
+    "t20.msh", process=False
+)  # trimesh.interfaces.gmsh.load_gmsh
 trimesh_object.faces
 all_coords = trimesh_object.vertices
 all_tris = trimesh_object.faces
-trimesh_object.triangles # gives list of coordinates of each triangle
+trimesh_object.triangles  # gives list of coordinates of each triangle
 # merge_verticeslooks useful
 #     coords = coords.tolist()
 #     nodeTags = []
