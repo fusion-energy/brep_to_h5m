@@ -1,14 +1,12 @@
-import os
+
 from vertices_to_h5m import vertices_to_h5m
 
 import gmsh
-import trimesh
-import plotly.graph_objects as go
-import numpy as np
 
 
-# brep_filename = "test_two_cubes.brep"
-brep_filename = "test_two_sep_cubes.brep"
+brep_filename = "test_brep_file.brep"  # 6 volumes
+# brep_filename = "test_two_joined_cubes.brep"
+# brep_filename = "test_two_sep_cubes.brep"
 # brep_filename = "one_cube.brep"
 
 min_mesh_size = 2
@@ -57,7 +55,6 @@ for group in groups:
         for nodeTag in nodeTags:
             shifted_node_tags.append(nodeTag-1)
         grouped_node_tags = [shifted_node_tags[i : i + n] for i in range(0, len(shifted_node_tags), n)]
-        # grouped_node_tags = [nodeTags[i : i + n] for i in range(0, len(nodeTags), n)]
         nodes_in_all_surfaces += grouped_node_tags
     nodes_in_each_pg.append(nodes_in_all_surfaces)
 
@@ -69,6 +66,6 @@ GroupedCoords = [all_coords[i : i + n].tolist() for i in range(0, len(all_coords
 vertices_to_h5m(
     vertices=GroupedCoords,
     triangles=nodes_in_each_pg,
-    material_tags=["mat1", "mat2"],
+    material_tags=["mat1", "mat2", "mat3", "mat4", "mat5", "mat6"],
     h5m_filename="two_volume_touching_face3.h5m",
 )
