@@ -9,8 +9,7 @@ import numpy as np
 
 # brep_filename = "test_two_cubes.brep"
 # brep_filename = "test_two_sep_cubes.brep"
-brep_filename = "one_cube.brep"
-
+brep_filename = "test_two_sep_cubes.brep"
 min_mesh_size = 2
 max_mesh_size = 3
 mesh_algorithm = 1
@@ -41,6 +40,30 @@ for dim_and_vol in volumes:
 
 gmsh.model.mesh.generate(2)
 
+gmsh.write("test_two_sep_cubes.msh")
+
+import gmshparser
+mesh = gmshparser.parse("t20.msh")
+
+all_coords = []
+for entity in mesh.get_node_entities():
+    for node in entity.get_nodes():
+        nid = node.get_tag()
+        ncoords = node.get_coordinates()
+        print("Node id = %s, node coordinates = %s" % (nid, ncoords))
+        all_coords.append(ncoords)
+
+triangles = []
+for entity in mesh.get_element_entities():
+    eltype = entity.get_element_type()
+    if eltype == 2:
+        print("Element type: %s" % eltype)
+        for element in entity.get_elements():
+            elid = element.get_tag()
+            elcon = element.get_connectivity()
+            shifted = [elcon[0]-1, elcon[1]-1, elcon[2]-1]
+            print("Element id = %s, connectivity = %s" % (elid, elcon))
+            triangles.append(shifted)
 
 # nodesets = []
 # triangle = gmsh.model.mesh.getElements(2,1)[1][0]
@@ -57,35 +80,29 @@ gmsh.model.mesh.generate(2)
 
 
 
-for dim_and_vol in volumes:
-    vol_id = dim_and_vol[1]
-    # gmsh.model.mesh.get
-    nodeTagsOrg, coords = gmsh.model.mesh.getNodesForPhysicalGroup(dim=2, tag=vol_id)
+# for dim_and_vol in volumes:
+#     vol_id = dim_and_vol[1]
+#     # gmsh.model.mesh.get
+#     nodeTagsOrg, coords = gmsh.model.mesh.getNodesForPhysicalGroup(dim=2, tag=vol_id)
 
-    coords = coords.tolist()
-    # nodeTags = []
-    # for tag in nodeTagsOrg:
-    #     tag = tag -1
-    #     nodeTags.append(int(tag))
-    # GroupednodeTags = [nodeTags[i : i + n] for i in range(0, len(nodeTags), n)]
+#     coords = coords.tolist()
+#     nodeTags = []
+#     for tag in nodeTagsOrg:
+#         tag = tag -1
+#         nodeTags.append(int(tag))
+#     GroupednodeTags = [nodeTags[i : i + n] for i in range(0, len(nodeTags), n)]
 
-    GroupednCoords = [coords[i : i + n] for i in range(0, len(coords), n)]
+#     GroupednCoords = [coords[i : i + n] for i in range(0, len(coords), n)]
 
-    all_coords = all_coords + GroupednCoords
-    all_coords_by_vol.append(GroupednCoords)
+#     all_coords = all_coords + GroupednCoords
+#     all_coords_by_vol.append(GroupednCoords)
 
-    # for i, vert in enumerate(GroupednodeTags):
-    #     print(i, "GroupednodeTags", vert)
-    # print()
-    # all_tris.append(GroupednodeTags)
+#     for i, vert in enumerate(GroupednodeTags):
+#         print(i, "GroupednodeTags", vert)
+#     print()
+#     all_tris.append(GroupednodeTags)
 
-all_elements_org = gmsh.model.mesh.get_elements()[2][1]
-all_elements=[]
-for tag in all_elements_org:
-    tag = tag -1
-    all_elements.append(int(tag))
 
-triangles = [all_elements[i : i + n] for i in range(0, len(all_elements), n)]
 
 # # trimesh_object = trimesh.load("t20.msh", process=False) #trimesh.interfaces.gmsh.load_gmsh
 # # trimesh_object.faces
@@ -113,13 +130,16 @@ triangles = [all_elements[i : i + n] for i in range(0, len(all_elements), n)]
 #                                    mode='markers')])
 # # fig.show()
 
-
+for coord in all_coords:
+    print(coord)
+for tri in triangles:
+    print(tri)
 
 # # This will produce a h5m file called two_volume_touching_face.h5m ready for use with DAGMC enabled codes
 vertices_to_h5m(
     vertices=all_coords,
     triangles=[triangles],
     material_tags=["mat1"],
-    h5m_filename="two_volume_touching_face2.h5m",
+    h5m_filename="two_volume_touching_face.h5m",
 )
 # # os.system("mbconvert two_volume_touching_face.h5m two_volume_touching_face.vtk")

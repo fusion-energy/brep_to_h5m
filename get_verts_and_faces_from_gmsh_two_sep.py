@@ -8,8 +8,8 @@ import numpy as np
 
 
 # brep_filename = "test_two_cubes.brep"
-# brep_filename = "test_two_sep_cubes.brep"
-brep_filename = "one_cube.brep"
+brep_filename = "test_two_sep_cubes.brep"
+# brep_filename = "one_cube.brep"
 
 min_mesh_size = 2
 max_mesh_size = 3
