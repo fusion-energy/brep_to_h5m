@@ -5,6 +5,7 @@ import warnings
 import gmsh
 import trimesh
 from stl_to_h5m import stl_to_h5m
+from vertices_to_h5m import vertices_to_h5m
 
 
 def brep_to_h5m(
@@ -16,6 +17,7 @@ def brep_to_h5m(
     mesh_algorithm: int = 1,
     write_stl_files_to_temp: bool = True,
     delete_intermediate_stl_files: bool = True,
+    method='stl'
 ) -> str:
     """Converts a Brep file into a DAGMC h5m file. This makes use of Gmsh and
     will therefore need to have Gmsh installed to work.
@@ -49,15 +51,20 @@ def brep_to_h5m(
         mesh_algorithm=mesh_algorithm,
         volumes_with_tags=volumes_with_tags,
     )
-
-    h5m_filename = mesh_to_h5m_stl_method(
-        mesh=gmsh,
-        volumes=volumes,
-        volumes_with_tags=volumes_with_tags,
-        h5m_filename=h5m_filename,
-        write_stl_files_to_temp=write_stl_files_to_temp,
-        delete_intermediate_stl_files=delete_intermediate_stl_files,
-    )
+    if method == 'stl':
+        h5m_filename = mesh_to_h5m_stl_method(
+            volumes=volumes,
+            volumes_with_tags=volumes_with_tags,
+            h5m_filename=h5m_filename,
+            write_stl_files_to_temp=write_stl_files_to_temp,
+            delete_intermediate_stl_files=delete_intermediate_stl_files,
+        )
+    else:
+        h5m_filename = mesh_to_h5m_in_memory_method(
+            volumes=volumes,
+            volumes_with_tags=volumes_with_tags,
+            h5m_filename=h5m_filename,
+        )
 
     return h5m_filename
 
@@ -113,29 +120,66 @@ def mesh_brep(
 
 
 def mesh_to_h5m_in_memory_method(
-    mesh,
     volumes,
     volumes_with_tags,
     h5m_filename: str = "dagmc.h5m",
-):
+) -> str:
 
-    stl_filenames = []
+    material_tags = []
+    for tag_name in volumes_with_tags.keys():
+        tag_name = f"mat:{tag_name}"
+        material_tags.append(tag_name)
+
+    all_coords = []
+    n = 3
+
     for dim_and_vol in volumes:
         vol_id = dim_and_vol[1]
+        print("vol_id", vol_id)
         entities_in_volume = gmsh.model.getAdjacencies(3, vol_id)
         surfaces_in_volume = entities_in_volume[1]
         ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
+        print("surfaces_in_volume", surfaces_in_volume)
         gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
 
-        # gmsh.write(tmp_filename)
+    gmsh.model.mesh.generate(2)
 
-        stl_filenames.append((vol_id, tmp_filename))
-        gmsh.model.removePhysicalGroups([])  # removes all groups
+    nodes_in_each_pg = []
+    groups = gmsh.model.getPhysicalGroups()
+    for group in groups:
+        dim = group[0]
+        tag = group[1]
+
+        surfaces = gmsh.model.getEntitiesForPhysicalGroup(dim, tag)
+
+        nodes_in_all_surfaces = []
+        for surface in surfaces:
+            elementTypes, elementTags, nodeTags = gmsh.model.mesh.getElements(2, surface)
+            nodeTags = nodeTags[0].tolist()
+            shifted_node_tags = []
+            for nodeTag in nodeTags:
+                shifted_node_tags.append(nodeTag-1)
+            grouped_node_tags = [shifted_node_tags[i : i + n] for i in range(0, len(shifted_node_tags), n)]
+            nodes_in_all_surfaces += grouped_node_tags
+        nodes_in_each_pg.append(nodes_in_all_surfaces)
+
+    all_nodes, all_coords, _ = gmsh.model.mesh.getNodes()
+
+    GroupedCoords = [all_coords[i : i + n].tolist() for i in range(0, len(all_coords), n)]
+
     gmsh.finalize()
+
+    vertices_to_h5m(
+        vertices=GroupedCoords,
+        triangles=nodes_in_each_pg,
+        material_tags=material_tags,
+        h5m_filename=h5m_filename,
+    )
+
+    return h5m_filename
 
 
 def mesh_to_h5m_stl_method(
-    mesh,
     volumes,
     volumes_with_tags,
     h5m_filename: str = "dagmc.h5m",
