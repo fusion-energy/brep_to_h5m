@@ -1,4 +1,3 @@
-
 from vertices_to_h5m import vertices_to_h5m
 
 import gmsh
@@ -53,8 +52,10 @@ for group in groups:
         nodeTags = nodeTags[0].tolist()
         shifted_node_tags = []
         for nodeTag in nodeTags:
-            shifted_node_tags.append(nodeTag-1)
-        grouped_node_tags = [shifted_node_tags[i : i + n] for i in range(0, len(shifted_node_tags), n)]
+            shifted_node_tags.append(nodeTag - 1)
+        grouped_node_tags = [
+            shifted_node_tags[i : i + n] for i in range(0, len(shifted_node_tags), n)
+        ]
         nodes_in_all_surfaces += grouped_node_tags
     nodes_in_each_pg.append(nodes_in_all_surfaces)
 
