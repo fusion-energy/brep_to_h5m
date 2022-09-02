@@ -55,8 +55,6 @@ gmsh.model.mesh.generate(2)
 #     nodesets.append(nodeset)
 
 
-
-
 for dim_and_vol in volumes:
     vol_id = dim_and_vol[1]
     # gmsh.model.mesh.get
@@ -80,9 +78,9 @@ for dim_and_vol in volumes:
     # all_tris.append(GroupednodeTags)
 
 all_elements_org = gmsh.model.mesh.get_elements()[2][1]
-all_elements=[]
+all_elements = []
 for tag in all_elements_org:
-    tag = tag -1
+    tag = tag - 1
     all_elements.append(int(tag))
 
 triangles = [all_elements[i : i + n] for i in range(0, len(all_elements), n)]
@@ -112,7 +110,6 @@ triangles = [all_elements[i : i + n] for i in range(0, len(all_elements), n)]
 # fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
 #                                    mode='markers')])
 # # fig.show()
-
 
 
 # # This will produce a h5m file called two_volume_touching_face.h5m ready for use with DAGMC enabled codes

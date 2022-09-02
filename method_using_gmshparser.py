@@ -43,6 +43,7 @@ gmsh.model.mesh.generate(2)
 gmsh.write("test_two_sep_cubes.msh")
 
 import gmshparser
+
 mesh = gmshparser.parse("t20.msh")
 
 all_coords = []
@@ -61,7 +62,7 @@ for entity in mesh.get_element_entities():
         for element in entity.get_elements():
             elid = element.get_tag()
             elcon = element.get_connectivity()
-            shifted = [elcon[0]-1, elcon[1]-1, elcon[2]-1]
+            shifted = [elcon[0] - 1, elcon[1] - 1, elcon[2] - 1]
             print("Element id = %s, connectivity = %s" % (elid, elcon))
             triangles.append(shifted)
 
@@ -76,8 +77,6 @@ for entity in mesh.get_element_entities():
 #     nodeset = [nodes[2*j], nodes[2*j+1], nodes[2*j+2]]
 #     print(f"Element Tag({triangle[j]}={nodeset}")
 #     nodesets.append(nodeset)
-
-
 
 
 # for dim_and_vol in volumes:
@@ -101,7 +100,6 @@ for entity in mesh.get_element_entities():
 #         print(i, "GroupednodeTags", vert)
 #     print()
 #     all_tris.append(GroupednodeTags)
-
 
 
 # # trimesh_object = trimesh.load("t20.msh", process=False) #trimesh.interfaces.gmsh.load_gmsh
