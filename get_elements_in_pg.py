@@ -44,19 +44,21 @@ gmsh.model.mesh.generate(2)
 nodes_in_each_pg = []
 groups = gmsh.model.getPhysicalGroups()
 for group in groups:
-    dim=group[0]
-    tag=group[1]
+    dim = group[0]
+    tag = group[1]
 
-    surfaces = gmsh.model.getEntitiesForPhysicalGroup(dim,tag)
+    surfaces = gmsh.model.getEntitiesForPhysicalGroup(dim, tag)
 
     nodes_in_all_surfaces = []
     for surface in surfaces:
         elementTypes, elementTags, nodeTags = gmsh.model.mesh.getElements(2, surface)
-        nodeTags=nodeTags[0].tolist()
+        nodeTags = nodeTags[0].tolist()
         shifted_node_tags = []
         for nodeTag in nodeTags:
-            shifted_node_tags.append(nodeTag-1)
-        grouped_node_tags = [shifted_node_tags[i : i + n] for i in range(0, len(shifted_node_tags), n)]
+            shifted_node_tags.append(nodeTag - 1)
+        grouped_node_tags = [
+            shifted_node_tags[i : i + n] for i in range(0, len(shifted_node_tags), n)
+        ]
         # grouped_node_tags = [nodeTags[i : i + n] for i in range(0, len(nodeTags), n)]
         nodes_in_all_surfaces += grouped_node_tags
     nodes_in_each_pg.append(nodes_in_all_surfaces)
