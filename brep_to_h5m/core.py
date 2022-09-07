@@ -125,7 +125,7 @@ def mesh_to_h5m_in_memory_method(
     h5m_filename: str = "dagmc.h5m",
 ) -> str:
 
-    print('volumes_with_tags', volumes_with_tags)
+    print("volumes_with_tags", volumes_with_tags)
 
     material_tags = []
     for tag_name in volumes_with_tags.values():
@@ -134,7 +134,7 @@ def mesh_to_h5m_in_memory_method(
         # if not tag_name.startswith("mat:"):
         #     tag_name = f"mat:{tag_name}"
         material_tags.append(tag_name)
-    print('material_tags',material_tags)
+    print("material_tags", material_tags)
 
     all_coords = []
     n = 3
@@ -182,7 +182,7 @@ def mesh_to_h5m_in_memory_method(
 
     gmsh.finalize()
 
-    print('material_tags', material_tags)
+    print("material_tags", material_tags)
 
     vertices_to_h5m(
         vertices=GroupedCoords,
