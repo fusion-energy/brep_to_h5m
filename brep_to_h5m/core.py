@@ -94,6 +94,11 @@ def mesh_brep(
         The gmsh object and volumes in Brep file
     """
 
+    path = Path(brep_filename)
+
+    if not path.is_file():
+        raise FileNotFoundError(f'The {brep_filename} brep file was not found')
+
     gmsh.initialize()
     gmsh.option.setNumber("General.Terminal", 1)
     gmsh.model.add("made_with_brep_to_h5m_package")
