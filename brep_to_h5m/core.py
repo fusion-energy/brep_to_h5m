@@ -4,6 +4,7 @@ import warnings
 
 import gmsh
 import trimesh
+from pathlib import Path
 from stl_to_h5m import stl_to_h5m
 from vertices_to_h5m import vertices_to_h5m
 
