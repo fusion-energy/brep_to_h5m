@@ -24,9 +24,9 @@ jobs:
         run: |
           apt update -y
           apt-get install ffmpeg libsm6 libxext6  -y
-          conda install -c conda-forge mamba
-          mamba install -c conda-forge gmsh
-          mamba install -c conda-forge python-gmsh
+          conda install -c conda-forge -y mamba
+          mamba install -c conda-forge -y gmsh
+          mamba install -c conda-forge -y python-gmsh
           mamba install -c conda-forge -y "openmc=0.13.1=dagmc*nompi*"
 
 

@@ -4,6 +4,7 @@ import dagmc_h5m_file_inspector as di
 import openmc
 import openmc_data_downloader as odd
 from brep_to_h5m import brep_to_h5m
+import math
 
 
 """
@@ -110,6 +111,9 @@ def transport_particles_on_h5m_geometry(
         },  # the first "mean" is the name of the data set label inside the vtk file
     )
 
+    my_heating_cell_tally = statepoint.get_tally(name="heating")
+    return my_heating_cell_tally.mean.flatten()[0]
+
 
 def test_transport_on_h5m_with_6_volumes():
 
@@ -197,3 +201,40 @@ def test_transport_on_h5m_with_2_sep_volumes():
     transport_particles_on_h5m_geometry(
         h5m_filename=h5m_filename, material_tags=material_tags
     )
+
+
+def test_transport_result_h5m_with_2_sep_volumes():
+
+    brep_filename = "tests/test_two_sep_cubes.brep"
+    h5m_filename = "test_two_sep_cubes.h5m"
+    volumes = 2
+
+    brep_to_h5m(
+        brep_filename=brep_filename,
+        volumes_with_tags={n: f"material_{n}" for n in range(1, volumes + 1)},
+        h5m_filename=h5m_filename,
+        min_mesh_size=30,
+        max_mesh_size=50,
+        mesh_algorithm=1,
+        method="new",
+    )
+
+    material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
+    new_tally = transport_particles_on_h5m_geometry(
+        h5m_filename=h5m_filename, material_tags=material_tags
+    )
+
+    brep_to_h5m(
+        brep_filename=brep_filename,
+        volumes_with_tags={n: f"material_{n}" for n in range(1, volumes + 1)},
+        h5m_filename=h5m_filename,
+        min_mesh_size=30,
+        max_mesh_size=50,
+        mesh_algorithm=1,
+        method="new",
+    )
+    stl_tally = transport_particles_on_h5m_geometry(
+        h5m_filename=h5m_filename, material_tags=material_tags
+    )
+
+    assert math.isclose(new_tally, stl_tally)
