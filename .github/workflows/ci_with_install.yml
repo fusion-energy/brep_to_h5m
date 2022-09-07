@@ -27,6 +27,7 @@ jobs:
           conda install -c conda-forge gmsh
           conda install -c conda-forge python-gmsh
           conda install -c conda-forge moab
+          conda install -c conda-forge -y "openmc=0.13.1=dagmc*nompi*"
 
 
       - name: install package
