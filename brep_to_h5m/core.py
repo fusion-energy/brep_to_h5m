@@ -34,7 +34,7 @@ def brep_to_h5m(
         mesh_algorithm: The Gmsh mesh algorithm number to use. Passed into
             gmsh.option.setNumber("Mesh.Algorithm", mesh_algorithm)
         write_stl_files_to_temp: If set to True the intermediate STL files
-            required will be written to the opperating systems temporary file
+            required will be written to the operating systems temporary file
             folder. If set to False the STL files will be written to the
             current working directory.
         delete_intermediate_stl_files: If set to True the intermediate STL
@@ -125,10 +125,16 @@ def mesh_to_h5m_in_memory_method(
     h5m_filename: str = "dagmc.h5m",
 ) -> str:
 
+    print('volumes_with_tags', volumes_with_tags)
+
     material_tags = []
-    for tag_name in volumes_with_tags.keys():
-        tag_name = f"mat:{tag_name}"
+    for tag_name in volumes_with_tags.values():
+        # caused error in transport
+        # ERROR: No material 'mat' found for volume (cell) 1
+        # if not tag_name.startswith("mat:"):
+        #     tag_name = f"mat:{tag_name}"
         material_tags.append(tag_name)
+    print('material_tags',material_tags)
 
     all_coords = []
     n = 3
@@ -169,6 +175,8 @@ def mesh_to_h5m_in_memory_method(
 
     gmsh.finalize()
 
+    print('material_tags', material_tags)
+
     vertices_to_h5m(
         vertices=GroupedCoords,
         triangles=nodes_in_each_pg,
@@ -194,14 +202,14 @@ def mesh_to_h5m_stl_method(
         volumes: the volumes in the gmsh file, found with gmsh.model.occ.importShapes
         h5m_filename: the filename of the DAGMC h5m file to write
         write_stl_files_to_temp: If set to True the intermediate STL files
-            required will be written to the opperating systems temporary file
+            required will be written to the operating systems temporary file
             folder. If set to False the STL files will be written to the
             current working directory.
         delete_intermediate_stl_files: If set to True the intermediate STL
             files produced will be deleted. If set the False the intermediate
             STL files will be left intact.
         write_stl_files_to_temp: If set to True the intermediate STL files
-            required will be written to the opperating systems temporary file
+            required will be written to the operating systems temporary file
             folder. If set to False the STL files will be written to the
             current working directory.
         delete_intermediate_stl_files: If set to True the intermediate STL
