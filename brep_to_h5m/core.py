@@ -17,7 +17,7 @@ def brep_to_h5m(
     mesh_algorithm: int = 1,
     write_stl_files_to_temp: bool = True,
     delete_intermediate_stl_files: bool = True,
-    method='stl'
+    method="stl",
 ) -> str:
     """Converts a Brep file into a DAGMC h5m file. This makes use of Gmsh and
     will therefore need to have Gmsh installed to work.
@@ -51,7 +51,7 @@ def brep_to_h5m(
         mesh_algorithm=mesh_algorithm,
         volumes_with_tags=volumes_with_tags,
     )
-    if method == 'stl':
+    if method == "stl":
         h5m_filename = mesh_to_h5m_stl_method(
             volumes=volumes,
             volumes_with_tags=volumes_with_tags,
@@ -160,18 +160,25 @@ def mesh_to_h5m_in_memory_method(
 
         nodes_in_all_surfaces = []
         for surface in surfaces:
-            elementTypes, elementTags, nodeTags = gmsh.model.mesh.getElements(2, surface)
+            elementTypes, elementTags, nodeTags = gmsh.model.mesh.getElements(
+                2, surface
+            )
             nodeTags = nodeTags[0].tolist()
             shifted_node_tags = []
             for nodeTag in nodeTags:
-                shifted_node_tags.append(nodeTag-1)
-            grouped_node_tags = [shifted_node_tags[i : i + n] for i in range(0, len(shifted_node_tags), n)]
+                shifted_node_tags.append(nodeTag - 1)
+            grouped_node_tags = [
+                shifted_node_tags[i : i + n]
+                for i in range(0, len(shifted_node_tags), n)
+            ]
             nodes_in_all_surfaces += grouped_node_tags
         nodes_in_each_pg.append(nodes_in_all_surfaces)
 
     all_nodes, all_coords, _ = gmsh.model.mesh.getNodes()
 
-    GroupedCoords = [all_coords[i : i + n].tolist() for i in range(0, len(all_coords), n)]
+    GroupedCoords = [
+        all_coords[i : i + n].tolist() for i in range(0, len(all_coords), n)
+    ]
 
     gmsh.finalize()
 
