@@ -40,7 +40,7 @@ def transport_particles_on_h5m_geometry(
     bound_dag_univ = dag_univ.bounded_universe()
     geometry = openmc.Geometry(root=bound_dag_univ)
 
-    # initialises a new source object
+    # initializes a new source object
     my_source = openmc.Source()
 
     center_of_geometry = (

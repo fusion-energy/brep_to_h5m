@@ -97,7 +97,7 @@ def mesh_brep(
 
     if not Path(brep_filename).is_file():
         msg = f"The specified brep ({brep_filename}) file was not found"
-        raise FileNotFoundError()
+        raise FileNotFoundError(msg)
 
     gmsh.initialize()
     gmsh.option.setNumber("General.Terminal", 1)
