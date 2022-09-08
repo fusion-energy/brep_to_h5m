@@ -117,7 +117,7 @@ def transport_particles_on_h5m_geometry(
 
 def test_transport_on_h5m_with_6_volumes():
 
-    brep_filename = "test_brep_file.brep"
+    brep_filename = "tests/test_brep_file.brep"
     h5m_filename = "test_brep_file.h5m"
     volumes = 6
 
@@ -139,7 +139,7 @@ def test_transport_on_h5m_with_6_volumes():
 
 def test_transport_on_h5m_with_1_volumes():
 
-    brep_filename = "one_cube.brep"
+    brep_filename = "tests/one_cube.brep"
     h5m_filename = "one_cube.h5m"
     volumes = 1
 
@@ -161,7 +161,7 @@ def test_transport_on_h5m_with_1_volumes():
 
 def test_transport_on_h5m_with_2_joined_volumes():
 
-    brep_filename = "test_two_joined_cubes.brep"
+    brep_filename = "tests/test_two_joined_cubes.brep"
     h5m_filename = "test_two_joined_cubes.h5m"
     volumes = 2
 
@@ -183,7 +183,7 @@ def test_transport_on_h5m_with_2_joined_volumes():
 
 def test_transport_on_h5m_with_2_sep_volumes():
 
-    brep_filename = "test_two_sep_cubes.brep"
+    brep_filename = "tests/test_two_sep_cubes.brep"
     h5m_filename = "test_two_sep_cubes.h5m"
     volumes = 2
 
@@ -205,7 +205,7 @@ def test_transport_on_h5m_with_2_sep_volumes():
 
 def test_transport_result_h5m_with_2_sep_volumes():
 
-    brep_filename = "test_two_sep_cubes.brep"
+    brep_filename = "tests/test_two_sep_cubes.brep"
     h5m_filename = "test_two_sep_cubes.h5m"
     volumes = 2
 

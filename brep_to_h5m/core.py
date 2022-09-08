@@ -95,10 +95,9 @@ def mesh_brep(
         The gmsh object and volumes in Brep file
     """
 
-    path = Path(brep_filename)
-
-    if not path.is_file():
-        raise FileNotFoundError(f"The {brep_filename} brep file was not found")
+    if not Path(brep_filename).is_file():
+        msg = f"The specified brep ({brep_filename}) file was not found"
+        raise FileNotFoundError()
 
     gmsh.initialize()
     gmsh.option.setNumber("General.Terminal", 1)
