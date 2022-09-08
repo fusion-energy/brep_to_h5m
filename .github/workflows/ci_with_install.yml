@@ -29,7 +29,6 @@ jobs:
           mamba install -c conda-forge -y python-gmsh
           mamba install -c conda-forge -y "openmc=0.13.1=dagmc*nompi*"
 
-
       - name: install package
         run: |
           pip install .
@@ -41,4 +40,7 @@ jobs:
 
       - name: Run test_utils
         run: |
+          ls -lh
+          ls -lh tests
+          pwd
           pytest tests -v 
