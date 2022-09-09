@@ -12,12 +12,12 @@ vv_thickness = 10.0
 lower_vv_thickness = 10.0
 
 
-mat_vessel_cell_lower = openmc.Material(1, name='lower_vessel')
-mat_vessel_cell_upper = openmc.Material(2, name='upper_vessel')
-mat_vessel_cell_cylinder = openmc.Material(3, name='vessel')
-mat_blanket_cell_cylinder = openmc.Material(name='blanket')
-mat_blanket_cell_upper = openmc.Material(5, name='upper_blanket')
-mat_blanket_cell_lower = openmc.Material(6, name='lower_blanket')
+mat_vessel_cell_lower = openmc.Material(1, name="lower_vessel")
+mat_vessel_cell_upper = openmc.Material(2, name="upper_vessel")
+mat_vessel_cell_cylinder = openmc.Material(3, name="vessel")
+mat_blanket_cell_cylinder = openmc.Material(name="blanket")
+mat_blanket_cell_upper = openmc.Material(5, name="upper_blanket")
+mat_blanket_cell_lower = openmc.Material(6, name="lower_blanket")
 
 for mat in [mat_vessel_cell_lower, mat_vessel_cell_upper, mat_vessel_cell_cylinder]:
     mat.add_element("Fe", 89)
@@ -31,34 +31,49 @@ for mat in [mat_blanket_cell_cylinder, mat_blanket_cell_upper, mat_blanket_cell_
     mat.add_element("Li", 100)
     mat.set_density("g/cm3", 0.5)
 
-materials = openmc.Materials([
-    mat_vessel_cell_lower,
-    mat_vessel_cell_upper,
-    mat_vessel_cell_cylinder,
-    mat_blanket_cell_cylinder,
-    mat_blanket_cell_upper,
-    mat_blanket_cell_lower,
-])
+materials = openmc.Materials(
+    [
+        mat_vessel_cell_lower,
+        mat_vessel_cell_upper,
+        mat_vessel_cell_cylinder,
+        mat_blanket_cell_cylinder,
+        mat_blanket_cell_upper,
+        mat_blanket_cell_lower,
+    ]
+)
 
 # surfaces
 inner_blanket_cylinder = openmc.ZCylinder(r=inner_blanket_radius)
 outer_blanket_cylinder = openmc.ZCylinder(r=inner_blanket_radius + blanket_thickness)
 
-inner_vessel_cylinder = openmc.ZCylinder(r=inner_blanket_radius + blanket_thickness + blanket_vv_gap)
+inner_vessel_cylinder = openmc.ZCylinder(
+    r=inner_blanket_radius + blanket_thickness + blanket_vv_gap
+)
 outer_vessel_cylinder = openmc.ZCylinder(
     r=inner_blanket_radius + blanket_thickness + blanket_vv_gap + vv_thickness,
     boundary_type="vacuum",
 )
 
-upper_vessel_bottom = openmc.ZPlane(z0=blanket_height + lower_vv_thickness + lower_blanket_thickness)
-upper_vessel_top = openmc.ZPlane(z0=blanket_height + lower_vv_thickness + lower_blanket_thickness + upper_vv_thickness)
+upper_vessel_bottom = openmc.ZPlane(
+    z0=blanket_height + lower_vv_thickness + lower_blanket_thickness
+)
+upper_vessel_top = openmc.ZPlane(
+    z0=blanket_height
+    + lower_vv_thickness
+    + lower_blanket_thickness
+    + upper_vv_thickness
+)
 
 lower_blanket_top = openmc.ZPlane(z0=lower_vv_thickness + lower_blanket_thickness)
 lower_blanket_bottom = openmc.ZPlane(z0=lower_vv_thickness)
 
 upper_blanket_bottom = upper_vessel_top
 upper_blanket_top = openmc.ZPlane(
-    z0=blanket_height + lower_vv_thickness + lower_blanket_thickness + upper_vv_thickness + upper_blanket_thickness,
+    z0=blanket_height
+    + lower_vv_thickness
+    + lower_blanket_thickness
+    + upper_vv_thickness
+    + upper_blanket_thickness,
     boundary_type="vacuum",
 )
 
@@ -67,14 +82,33 @@ lower_vessel_bottom = openmc.ZPlane(z0=0, boundary_type="vacuum")
 
 # regions
 inner_void_region = -upper_vessel_bottom & +lower_blanket_top & -inner_blanket_cylinder
-blanket_region = -upper_vessel_bottom & +lower_blanket_top & +inner_blanket_cylinder & -outer_blanket_cylinder
+blanket_region = (
+    -upper_vessel_bottom
+    & +lower_blanket_top
+    & +inner_blanket_cylinder
+    & -outer_blanket_cylinder
+)
 
-blanket_upper_region = -inner_vessel_cylinder & -upper_blanket_top & +upper_blanket_bottom
-blanket_lower_region = -inner_vessel_cylinder & -lower_blanket_top & +lower_blanket_bottom
+blanket_upper_region = (
+    -inner_vessel_cylinder & -upper_blanket_top & +upper_blanket_bottom
+)
+blanket_lower_region = (
+    -inner_vessel_cylinder & -lower_blanket_top & +lower_blanket_bottom
+)
 
-outer_void_region = -upper_vessel_bottom & +lower_blanket_top & -inner_vessel_cylinder & +outer_blanket_cylinder
+outer_void_region = (
+    -upper_vessel_bottom
+    & +lower_blanket_top
+    & -inner_vessel_cylinder
+    & +outer_blanket_cylinder
+)
 
-vessel_region = -upper_blanket_top & +lower_vessel_bottom & -outer_vessel_cylinder & +inner_vessel_cylinder
+vessel_region = (
+    -upper_blanket_top
+    & +lower_vessel_bottom
+    & -outer_vessel_cylinder
+    & +inner_vessel_cylinder
+)
 vessel_upper_region = -upper_vessel_top & +upper_vessel_bottom & -inner_vessel_cylinder
 vessel_lower_region = -lower_vessel_top & +lower_vessel_bottom & -inner_vessel_cylinder
 
@@ -122,9 +156,7 @@ tallies = openmc.Tallies()
 #         blanket_cell_lower,
 #     ]
 # )
-material_filter = openmc.MaterialFilter(
-    materials
-)
+material_filter = openmc.MaterialFilter(materials)
 flux_tally = openmc.Tally(name="flux")
 flux_tally.filters = [material_filter]
 flux_tally.scores = ["flux"]
@@ -167,27 +199,28 @@ df_csg = flux_tally.get_pandas_dataframe()
 # flux_tally_result = df["mean"].sum()
 
 import os
-os.system('rm summary.h5')
-os.system('rm *.h5')
+
+os.system("rm summary.h5")
+os.system("rm *.h5")
 
 import paramak
 
 reactor = paramak.FlfSystemCodeReactor(
-    inner_blanket_radius = 100.0,
-    blanket_thickness = 70.0,
-    blanket_height = 500.0,
-    lower_blanket_thickness = 50.0,
-    upper_blanket_thickness = 40.0,
-    blanket_vv_gap = 20.0,
-    upper_vv_thickness = 10.0,
-    vv_thickness = 10.0,
-    lower_vv_thickness = 10.0,
-    rotation_angle=360
+    inner_blanket_radius=100.0,
+    blanket_thickness=70.0,
+    blanket_height=500.0,
+    lower_blanket_thickness=50.0,
+    upper_blanket_thickness=40.0,
+    blanket_vv_gap=20.0,
+    upper_vv_thickness=10.0,
+    vv_thickness=10.0,
+    lower_vv_thickness=10.0,
+    rotation_angle=360,
 )
 reactor.export_dagmc_h5m(
     "dagmc.h5m",
-    min_mesh_size = 1.0,
-    max_mesh_size = 1.5,
+    min_mesh_size=1.0,
+    max_mesh_size=1.5,
 )
 
 dag_univ = openmc.DAGMCUniverse(filename="dagmc.h5m")
