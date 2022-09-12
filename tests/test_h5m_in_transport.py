@@ -128,7 +128,6 @@ def test_transport_on_h5m_with_6_volumes():
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
-        method="new",
     )
 
     material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
@@ -150,7 +149,6 @@ def test_transport_on_h5m_with_1_volumes():
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
-        method="new",
     )
 
     material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
@@ -172,7 +170,6 @@ def test_transport_on_h5m_with_2_joined_volumes():
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
-        method="new",
     )
 
     material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
@@ -194,7 +191,6 @@ def test_transport_on_h5m_with_2_sep_volumes():
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
-        method="new",
     )
 
     material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
@@ -216,7 +212,6 @@ def test_transport_result_h5m_with_2_sep_volumes():
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
-        method="new",
     )
 
     material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
@@ -231,7 +226,6 @@ def test_transport_result_h5m_with_2_sep_volumes():
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
-        method="new",
     )
     stl_tally = transport_particles_on_h5m_geometry(
         h5m_filename=h5m_filename, material_tags=material_tags
