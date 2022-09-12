@@ -145,7 +145,6 @@ universe = openmc.Universe(
 geom = openmc.Geometry(universe)
 
 tallies = openmc.Tallies()
-
 material_filter = openmc.MaterialFilter(materials)
 flux_tally = openmc.Tally(name="flux")
 flux_tally.filters = [material_filter]
@@ -188,6 +187,7 @@ flux_tally = sp.get_tally(name="flux")
 df_csg = flux_tally.get_pandas_dataframe()
 # flux_tally_result = df["mean"].sum()
 
+<<<<<<< HEAD:examples/csg_comparision/make_voxel_plots.py
 
 # makes the 3d "cube" style geometry
 vox_plot = openmc.Plot()
@@ -211,6 +211,9 @@ openmc.plot_geometry()
 
 os.system("openmc-voxel-to-vtk plot_csg.h5 -o plot_csg.vti")
 
+=======
+import os
+>>>>>>> f48ada158a43d9a57d5b49eb11030816d61499d6:tests/test_results_vs_csg.py
 
 os.system("rm summary.h5")
 os.system("rm *.h5")
@@ -218,6 +221,7 @@ os.system("rm *.h5")
 import paramak
 
 reactor = paramak.FlfSystemCodeReactor(
+<<<<<<< HEAD:examples/csg_comparision/make_voxel_plots.py
     inner_blanket_radius=inner_blanket_radius,
     blanket_thickness=blanket_thickness,
     blanket_height=blanket_height,
@@ -227,14 +231,30 @@ reactor = paramak.FlfSystemCodeReactor(
     upper_vv_thickness=upper_vv_thickness,
     vv_thickness=vv_thickness,
     lower_vv_thickness=lower_vv_thickness,
+=======
+    inner_blanket_radius=100.0,
+    blanket_thickness=70.0,
+    blanket_height=500.0,
+    lower_blanket_thickness=50.0,
+    upper_blanket_thickness=40.0,
+    blanket_vv_gap=20.0,
+    upper_vv_thickness=10.0,
+    vv_thickness=10.0,
+    lower_vv_thickness=10.0,
+>>>>>>> f48ada158a43d9a57d5b49eb11030816d61499d6:tests/test_results_vs_csg.py
     rotation_angle=360,
 )
 reactor.export_stp("dagmc.stp")
 reactor.export_stl("dagmc.stl")
 reactor.export_dagmc_h5m(
     "dagmc.h5m",
+<<<<<<< HEAD:examples/csg_comparision/make_voxel_plots.py
     min_mesh_size=2,
     max_mesh_size=3,
+=======
+    min_mesh_size=1.0,
+    max_mesh_size=1.5,
+>>>>>>> f48ada158a43d9a57d5b49eb11030816d61499d6:tests/test_results_vs_csg.py
 )
 
 dag_univ = openmc.DAGMCUniverse(filename="dagmc.h5m")
