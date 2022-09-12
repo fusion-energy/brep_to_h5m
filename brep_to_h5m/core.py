@@ -130,31 +130,18 @@ def mesh_to_h5m_in_memory_method(
     h5m_filename: str = "dagmc.h5m",
 ) -> str:
 
-    print("volumes_with_tags", volumes_with_tags)
-
     material_tags = []
     for tag_name in volumes_with_tags.values():
-        # caused error in transport
-        # ERROR: No material 'mat' found for volume (cell) 1
-        # if not tag_name.startswith("mat:"):
-        #     tag_name = f"mat:{tag_name}"
         material_tags.append(tag_name)
-    print("material_tags", material_tags)
-
-    all_coords = []
-    n = 3
 
     for dim_and_vol in volumes:
         vol_id = dim_and_vol[1]
-        print("vol_id", vol_id)
         entities_in_volume = gmsh.model.getAdjacencies(3, vol_id)
         surfaces_in_volume = entities_in_volume[1]
         ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
-        print("surfaces_in_volume", surfaces_in_volume)
         gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
 
-    gmsh.model.mesh.generate(2)
-
+    n = 3
     nodes_in_each_pg = []
     groups = gmsh.model.getPhysicalGroups()
     for group in groups:
@@ -165,9 +152,7 @@ def mesh_to_h5m_in_memory_method(
 
         nodes_in_all_surfaces = []
         for surface in surfaces:
-            elementTypes, elementTags, nodeTags = gmsh.model.mesh.getElements(
-                2, surface
-            )
+            _, _, nodeTags = gmsh.model.mesh.getElements(2, surface)
             nodeTags = nodeTags[0].tolist()
             shifted_node_tags = []
             for nodeTag in nodeTags:
@@ -179,15 +164,13 @@ def mesh_to_h5m_in_memory_method(
             nodes_in_all_surfaces += grouped_node_tags
         nodes_in_each_pg.append(nodes_in_all_surfaces)
 
-    all_nodes, all_coords, _ = gmsh.model.mesh.getNodes()
+    _, all_coords, _ = gmsh.model.mesh.getNodes()
 
     GroupedCoords = [
         all_coords[i : i + n].tolist() for i in range(0, len(all_coords), n)
     ]
 
     gmsh.finalize()
-
-    print("material_tags", material_tags)
 
     vertices_to_h5m(
         vertices=GroupedCoords,

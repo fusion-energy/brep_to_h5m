@@ -134,12 +134,14 @@ dmypy.json
 *.brep
 *.h5m
 *.msh
+*.stp
 
 # OpenMC outputs
 *.xml
 *.out
 *.h5
 *.vtk
+*.vti
 
 # python package version number
 _version.py

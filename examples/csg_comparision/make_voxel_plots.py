@@ -1,5 +1,5 @@
 import openmc
-
+import os
 
 inner_blanket_radius = 100.0
 blanket_thickness = 70.0
@@ -7,17 +7,16 @@ blanket_height = 500.0
 lower_blanket_thickness = 50.0
 upper_blanket_thickness = 40.0
 blanket_vv_gap = 20.0
-upper_vv_thickness = 10.0
+upper_vv_thickness = 15.0
 vv_thickness = 10.0
-lower_vv_thickness = 10.0
+lower_vv_thickness = 40.0
 
-
-mat_vessel_cell_lower = openmc.Material(1, name='lower_vessel')
-mat_vessel_cell_upper = openmc.Material(2, name='upper_vessel')
-mat_vessel_cell_cylinder = openmc.Material(3, name='vessel')
-mat_blanket_cell_cylinder = openmc.Material(name='blanket')
-mat_blanket_cell_upper = openmc.Material(5, name='upper_blanket')
-mat_blanket_cell_lower = openmc.Material(6, name='lower_blanket')
+mat_vessel_cell_lower = openmc.Material(1, name="lower_vessel")
+mat_vessel_cell_upper = openmc.Material(2, name="upper_vessel")
+mat_vessel_cell_cylinder = openmc.Material(3, name="vessel")
+mat_blanket_cell_cylinder = openmc.Material(name="blanket")
+mat_blanket_cell_upper = openmc.Material(5, name="upper_blanket")
+mat_blanket_cell_lower = openmc.Material(6, name="lower_blanket")
 
 for mat in [mat_vessel_cell_lower, mat_vessel_cell_upper, mat_vessel_cell_cylinder]:
     mat.add_element("Fe", 89)
@@ -31,50 +30,84 @@ for mat in [mat_blanket_cell_cylinder, mat_blanket_cell_upper, mat_blanket_cell_
     mat.add_element("Li", 100)
     mat.set_density("g/cm3", 0.5)
 
-materials = openmc.Materials([
-    mat_vessel_cell_lower,
-    mat_vessel_cell_upper,
-    mat_vessel_cell_cylinder,
-    mat_blanket_cell_cylinder,
-    mat_blanket_cell_upper,
-    mat_blanket_cell_lower,
-])
+materials = openmc.Materials(
+    [
+        mat_vessel_cell_lower,
+        mat_vessel_cell_upper,
+        mat_vessel_cell_cylinder,
+        mat_blanket_cell_cylinder,
+        mat_blanket_cell_upper,
+        mat_blanket_cell_lower,
+    ]
+)
 
 # surfaces
 inner_blanket_cylinder = openmc.ZCylinder(r=inner_blanket_radius)
 outer_blanket_cylinder = openmc.ZCylinder(r=inner_blanket_radius + blanket_thickness)
 
-inner_vessel_cylinder = openmc.ZCylinder(r=inner_blanket_radius + blanket_thickness + blanket_vv_gap)
+inner_vessel_cylinder = openmc.ZCylinder(
+    r=inner_blanket_radius + blanket_thickness + blanket_vv_gap
+)
 outer_vessel_cylinder = openmc.ZCylinder(
     r=inner_blanket_radius + blanket_thickness + blanket_vv_gap + vv_thickness,
     boundary_type="vacuum",
 )
 
-upper_vessel_bottom = openmc.ZPlane(z0=blanket_height + lower_vv_thickness + lower_blanket_thickness)
-upper_vessel_top = openmc.ZPlane(z0=blanket_height + lower_vv_thickness + lower_blanket_thickness + upper_vv_thickness)
+upper_vessel_bottom = openmc.ZPlane(
+    z0=blanket_height + lower_vv_thickness + lower_blanket_thickness
+)
+upper_vessel_top = openmc.ZPlane(
+    z0=blanket_height
+    + lower_vv_thickness
+    + lower_blanket_thickness
+    + upper_vv_thickness
+)
 
 lower_blanket_top = openmc.ZPlane(z0=lower_vv_thickness + lower_blanket_thickness)
 lower_blanket_bottom = openmc.ZPlane(z0=lower_vv_thickness)
 
 upper_blanket_bottom = upper_vessel_top
 upper_blanket_top = openmc.ZPlane(
-    z0=blanket_height + lower_vv_thickness + lower_blanket_thickness + upper_vv_thickness + upper_blanket_thickness,
+    z0=blanket_height
+    + lower_vv_thickness
+    + lower_blanket_thickness
+    + upper_vv_thickness
+    + upper_blanket_thickness,
     boundary_type="vacuum",
 )
 
 lower_vessel_top = lower_blanket_bottom
-lower_vessel_bottom = openmc.ZPlane(z0=0, boundary_type="vacuum")
+lower_vessel_bottom = openmc.ZPlane(z0=0.0, boundary_type="vacuum")
 
 # regions
 inner_void_region = -upper_vessel_bottom & +lower_blanket_top & -inner_blanket_cylinder
-blanket_region = -upper_vessel_bottom & +lower_blanket_top & +inner_blanket_cylinder & -outer_blanket_cylinder
+blanket_region = (
+    -upper_vessel_bottom
+    & +lower_blanket_top
+    & +inner_blanket_cylinder
+    & -outer_blanket_cylinder
+)
 
-blanket_upper_region = -inner_vessel_cylinder & -upper_blanket_top & +upper_blanket_bottom
-blanket_lower_region = -inner_vessel_cylinder & -lower_blanket_top & +lower_blanket_bottom
+blanket_upper_region = (
+    -inner_vessel_cylinder & -upper_blanket_top & +upper_blanket_bottom
+)
+blanket_lower_region = (
+    -inner_vessel_cylinder & -lower_blanket_top & +lower_blanket_bottom
+)
 
-outer_void_region = -upper_vessel_bottom & +lower_blanket_top & -inner_vessel_cylinder & +outer_blanket_cylinder
+outer_void_region = (
+    -upper_vessel_bottom
+    & +lower_blanket_top
+    & -inner_vessel_cylinder
+    & +outer_blanket_cylinder
+)
 
-vessel_region = -upper_blanket_top & +lower_vessel_bottom & -outer_vessel_cylinder & +inner_vessel_cylinder
+vessel_region = (
+    -upper_blanket_top
+    & +lower_vessel_bottom
+    & -outer_vessel_cylinder
+    & +inner_vessel_cylinder
+)
 vessel_upper_region = -upper_vessel_top & +upper_vessel_bottom & -inner_vessel_cylinder
 vessel_lower_region = -lower_vessel_top & +lower_vessel_bottom & -inner_vessel_cylinder
 
@@ -112,19 +145,8 @@ universe = openmc.Universe(
 geom = openmc.Geometry(universe)
 
 tallies = openmc.Tallies()
-# cell_filter = openmc.CellFilter(
-#     [
-#         vessel_cell_lower,
-#         vessel_cell_upper,
-#         vessel_cell_cylinder,
-#         blanket_cell_cylinder,
-#         blanket_cell_upper,
-#         blanket_cell_lower,
-#     ]
-# )
-material_filter = openmc.MaterialFilter(
-    materials
-)
+
+material_filter = openmc.MaterialFilter(materials)
 flux_tally = openmc.Tally(name="flux")
 flux_tally.filters = [material_filter]
 flux_tally.scores = ["flux"]
@@ -137,7 +159,7 @@ range_of_source_heights = max_source_height - min_source_height
 absolute_height_of_source = (0.5 * range_of_source_heights) + min_source_height
 
 
-# initialises a new source object
+# initializes a new source object
 my_source = openmc.Source()
 
 # sets the location of the source to x=0 y=0 z=0
@@ -153,8 +175,8 @@ my_source.energy = openmc.stats.Discrete([14e6], [1])
 settings = openmc.Settings()
 settings.inactive = 0
 settings.run_mode = "fixed source"
-settings.batches = 10
-settings.particles = 10000
+settings.batches = 100
+settings.particles = 100000
 settings.source = my_source
 
 
@@ -166,28 +188,53 @@ flux_tally = sp.get_tally(name="flux")
 df_csg = flux_tally.get_pandas_dataframe()
 # flux_tally_result = df["mean"].sum()
 
-import os
-os.system('rm summary.h5')
-os.system('rm *.h5')
+
+# makes the 3d "cube" style geometry
+vox_plot = openmc.Plot()
+vox_plot.type = "voxel"
+vox_plot.width = (750.0, 750.0, 1500.0)
+vox_plot.pixels = (200, 200, 1000)
+vox_plot.filename = "plot_csg"
+vox_plot.color_by = "material"
+vox_plot.colors = {
+    mat_vessel_cell_lower: "red",
+    mat_vessel_cell_upper: "blue",
+    mat_vessel_cell_cylinder: "green",
+    mat_blanket_cell_cylinder: "grey",
+    mat_blanket_cell_upper: "orange",
+    mat_blanket_cell_lower: "pink",
+}
+plots = openmc.Plots([vox_plot])
+plots.export_to_xml()
+
+openmc.plot_geometry()
+
+os.system("openmc-voxel-to-vtk plot_csg.h5 -o plot_csg.vti")
+
+
+os.system("rm summary.h5")
+os.system("rm *.h5")
 
 import paramak
 
 reactor = paramak.FlfSystemCodeReactor(
-    inner_blanket_radius = 100.0,
-    blanket_thickness = 70.0,
-    blanket_height = 500.0,
-    lower_blanket_thickness = 50.0,
-    upper_blanket_thickness = 40.0,
-    blanket_vv_gap = 20.0,
-    upper_vv_thickness = 10.0,
-    vv_thickness = 10.0,
-    lower_vv_thickness = 10.0,
-    rotation_angle=360
+    inner_blanket_radius=inner_blanket_radius,
+    blanket_thickness=blanket_thickness,
+    blanket_height=blanket_height,
+    lower_blanket_thickness=lower_blanket_thickness,
+    upper_blanket_thickness=upper_blanket_thickness,
+    blanket_vv_gap=blanket_vv_gap,
+    upper_vv_thickness=upper_vv_thickness,
+    vv_thickness=vv_thickness,
+    lower_vv_thickness=lower_vv_thickness,
+    rotation_angle=360,
 )
+reactor.export_stp("dagmc.stp")
+reactor.export_stl("dagmc.stl")
 reactor.export_dagmc_h5m(
     "dagmc.h5m",
-    min_mesh_size = 1.0,
-    max_mesh_size = 1.5,
+    min_mesh_size=2,
+    max_mesh_size=3,
 )
 
 dag_univ = openmc.DAGMCUniverse(filename="dagmc.h5m")
@@ -205,33 +252,25 @@ df_cad = flux_tally.get_pandas_dataframe()
 print(df_csg)
 print(df_cad)
 
-#    material nuclide score     mean  std. dev.
-# 0         1   total  flux 1.58e+00   2.49e-02
-# 1         2   total  flux 4.64e+00   5.93e-02
-# 2         3   total  flux 1.63e+01   8.00e-02
-# 3         4   total  flux 2.45e+02   5.40e-01
-# 4         5   total  flux 7.25e+00   1.06e-01
-# 5         6   total  flux 1.84e+01   1.57e-01
-#    material nuclide score     mean  std. dev.
-# 0         1   total  flux 1.32e+00   2.20e-02
-# 1         2   total  flux 4.04e+00   6.26e-02
-# 2         3   total  flux 1.64e+01   9.60e-02
-# 3         4   total  flux 2.43e+02   5.31e-01
-# 4         5   total  flux 5.93e+00   8.33e-02
-# 5         6   total  flux 1.62e+01   1.11e-01
 
+# makes the 3d "cube" style geometry
+vox_plot = openmc.Plot()
+vox_plot.type = "voxel"
+vox_plot.width = (750.0, 750.0, 1500.0)
+vox_plot.pixels = (200, 200, 1000)
+vox_plot.filename = "plot_cad"
+vox_plot.color_by = "material"
+vox_plot.colors = {
+    mat_vessel_cell_lower: "red",
+    mat_vessel_cell_upper: "blue",
+    mat_vessel_cell_cylinder: "green",
+    mat_blanket_cell_cylinder: "grey",
+    mat_blanket_cell_upper: "orange",
+    mat_blanket_cell_lower: "pink",
+}
+plots = openmc.Plots([vox_plot])
+plots.export_to_xml()
 
-#    material nuclide score     mean  std. dev.
-# 0         1   total  flux 1.58e+00   2.49e-02
-# 1         2   total  flux 4.64e+00   5.93e-02
-# 2         3   total  flux 1.63e+01   8.00e-02
-# 3         4   total  flux 2.45e+02   5.40e-01
-# 4         5   total  flux 7.25e+00   1.06e-01
-# 5         6   total  flux 1.84e+01   1.57e-01
-#    material nuclide score     mean  std. dev.
-# 0         1   total  flux 1.34e+00   2.06e-02
-# 1         2   total  flux 4.01e+00   6.03e-02
-# 2         3   total  flux 1.64e+01   9.30e-02
-# 3         4   total  flux 2.43e+02   5.37e-01
-# 4         5   total  flux 5.81e+00   7.16e-02
-# 5         6   total  flux 1.63e+01   1.10e-01
+openmc.plot_geometry()
+
+os.system("openmc-voxel-to-vtk plot_cad.h5 -o plot_cad.vti")
