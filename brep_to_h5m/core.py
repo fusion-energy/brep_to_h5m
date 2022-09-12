@@ -13,12 +13,9 @@ def brep_to_h5m(
     brep_filename: str,
     volumes_with_tags: dict,
     h5m_filename: str = "dagmc.h5m",
-    min_mesh_size: int = 30,
-    max_mesh_size: int = 10,
+    min_mesh_size: float = 30,
+    max_mesh_size: float = 10,
     mesh_algorithm: int = 1,
-    write_stl_files_to_temp: bool = True,
-    delete_intermediate_stl_files: bool = True,
-    method="stl",
 ) -> str:
     """Converts a Brep file into a DAGMC h5m file. This makes use of Gmsh and
     will therefore need to have Gmsh installed to work.
@@ -34,13 +31,6 @@ def brep_to_h5m(
             into gmsh.option.setNumber("Mesh.MeshSizeMax", max_mesh_size)
         mesh_algorithm: The Gmsh mesh algorithm number to use. Passed into
             gmsh.option.setNumber("Mesh.Algorithm", mesh_algorithm)
-        write_stl_files_to_temp: If set to True the intermediate STL files
-            required will be written to the operating systems temporary file
-            folder. If set to False the STL files will be written to the
-            current working directory.
-        delete_intermediate_stl_files: If set to True the intermediate STL
-            files produced will be deleted. If set the False the intermediate
-            STL files will be left intact.
     Returns:
         The filename of the h5m file produced
     """
@@ -52,20 +42,12 @@ def brep_to_h5m(
         mesh_algorithm=mesh_algorithm,
         volumes_with_tags=volumes_with_tags,
     )
-    if method == "stl":
-        h5m_filename = mesh_to_h5m_stl_method(
-            volumes=volumes,
-            volumes_with_tags=volumes_with_tags,
-            h5m_filename=h5m_filename,
-            write_stl_files_to_temp=write_stl_files_to_temp,
-            delete_intermediate_stl_files=delete_intermediate_stl_files,
-        )
-    else:
-        h5m_filename = mesh_to_h5m_in_memory_method(
-            volumes=volumes,
-            volumes_with_tags=volumes_with_tags,
-            h5m_filename=h5m_filename,
-        )
+
+    h5m_filename = mesh_to_h5m_in_memory_method(
+        volumes=volumes,
+        volumes_with_tags=volumes_with_tags,
+        h5m_filename=h5m_filename,
+    )
 
     return h5m_filename
 
@@ -73,8 +55,8 @@ def brep_to_h5m(
 def mesh_brep(
     brep_filename: str,
     volumes_with_tags: dict,
-    min_mesh_size: int = 30,
-    max_mesh_size: int = 10,
+    min_mesh_size: float = 30,
+    max_mesh_size: float = 10,
     mesh_algorithm: int = 1,
 ):
     """Converts a Brep file into a DAGMC h5m file. This makes use of Gmsh and
