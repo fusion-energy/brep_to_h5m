@@ -101,13 +101,13 @@ def mesh_to_h5m_in_memory_method(
 ) -> str:
 
     if len(volumes) != len(material_tags):
-        msg = f"{len(volumes)} volumes found in Brep file is not equal to the number of material_tags {len(material_tags)} provided."   
+        msg = f"{len(volumes)} volumes found in Brep file is not equal to the number of material_tags {len(material_tags)} provided."
         raise ValueError(msg)
 
     n = 3  # number of verts in a trianglez
     nodes_in_each_pg = []
     for dim_and_vol in volumes:
-        
+
         gmsh.model.removePhysicalGroups()
 
         vol_id = dim_and_vol[1]
@@ -118,7 +118,7 @@ def mesh_to_h5m_in_memory_method(
 
         groups = gmsh.model.getPhysicalGroups()
         group = groups[0]
-    # for group in groups:
+        # for group in groups:
         dim = group[0]
         tag = group[1]
 
