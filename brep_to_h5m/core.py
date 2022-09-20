@@ -12,7 +12,7 @@ from typing import Tuple, Iterable
 
 def brep_to_h5m(
     brep_filename: str,
-    volumes_with_tags: Iterable[Tuple[int, str]],
+    material_tags: Iterable[str],
     h5m_filename: str = "dagmc.h5m",
     min_mesh_size: float = 30,
     max_mesh_size: float = 10,
@@ -41,12 +41,11 @@ def brep_to_h5m(
         min_mesh_size=min_mesh_size,
         max_mesh_size=max_mesh_size,
         mesh_algorithm=mesh_algorithm,
-        volumes_with_tags=volumes_with_tags,
     )
 
     h5m_filename = mesh_to_h5m_in_memory_method(
         volumes=volumes,
-        volumes_with_tags=volumes_with_tags,
+        material_tags=material_tags,
         h5m_filename=h5m_filename,
     )
 
@@ -55,7 +54,6 @@ def brep_to_h5m(
 
 def mesh_brep(
     brep_filename: str,
-    volumes_with_tags: Iterable[Tuple[int, str]],
     min_mesh_size: float = 30,
     max_mesh_size: float = 10,
     mesh_algorithm: int = 1,
@@ -88,17 +86,6 @@ def mesh_brep(
     volumes = gmsh.model.occ.importShapes(brep_filename)
     gmsh.model.occ.synchronize()
 
-    vols_in_brep = len(volumes)
-    vols_provided_by_user = len(volumes_with_tags)
-
-    if vols_in_brep != vols_provided_by_user:
-        msg = f"{vols_in_brep} volumes found in Brep file but only {vols_provided_by_user} volumes provided in volumes_with_tags argument."
-        warnings.warn(msg)
-
-    if vols_in_brep < vols_provided_by_user:
-        msg = f"The Brep file contains {vols_in_brep} volumes but {vols_provided_by_user} volumes are provided in the volumes_with_tags argument. Please reduce the number of volumes in volumes_with_tags"
-        raise ValueError(msg)
-
     gmsh.option.setNumber("Mesh.Algorithm", mesh_algorithm)
     gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
     gmsh.option.setNumber("Mesh.MeshSizeMax", max_mesh_size)
@@ -109,25 +96,29 @@ def mesh_brep(
 
 def mesh_to_h5m_in_memory_method(
     volumes,
-    volumes_with_tags,
+    material_tags,
     h5m_filename: str = "dagmc.h5m",
 ) -> str:
 
-    material_tags = []
-    for (volume_id, tag_name) in volumes_with_tags:
-        material_tags.append(tag_name)
+    if len(volumes) != len(material_tags):
+        msg = f"{len(volumes)} volumes found in Brep file is not equal to the number of material_tags {len(material_tags)} provided."   
+        raise ValueError(msg)
 
+    n = 3  # number of verts in a trianglez
+    nodes_in_each_pg = []
     for dim_and_vol in volumes:
+        
+        gmsh.model.removePhysicalGroups()
+
         vol_id = dim_and_vol[1]
         entities_in_volume = gmsh.model.getAdjacencies(3, vol_id)
         surfaces_in_volume = entities_in_volume[1]
         ps = gmsh.model.addPhysicalGroup(2, surfaces_in_volume)
         gmsh.model.setPhysicalName(2, ps, f"surfaces_on_volume_{vol_id}")
 
-    n = 3
-    nodes_in_each_pg = []
-    groups = gmsh.model.getPhysicalGroups()
-    for group in groups:
+        groups = gmsh.model.getPhysicalGroups()
+        group = groups[0]
+    # for group in groups:
         dim = group[0]
         tag = group[1]
 

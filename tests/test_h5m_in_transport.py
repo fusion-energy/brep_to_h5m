@@ -120,17 +120,17 @@ def test_transport_on_h5m_with_6_volumes():
     brep_filename = "tests/test_brep_file.brep"
     h5m_filename = "test_brep_file.h5m"
     volumes = 6
+    material_tags = [f"material_{n}" for n in range(1, volumes + 1)]
 
     brep_to_h5m(
         brep_filename=brep_filename,
-        volumes_with_tags={n: f"material_{n}" for n in range(1, volumes + 1)},
+        material_tags=material_tags,
         h5m_filename=h5m_filename,
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
     )
 
-    material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
     transport_particles_on_h5m_geometry(
         h5m_filename=h5m_filename, material_tags=material_tags
     )
@@ -141,17 +141,17 @@ def test_transport_on_h5m_with_1_volumes():
     brep_filename = "tests/one_cube.brep"
     h5m_filename = "one_cube.h5m"
     volumes = 1
+    material_tags = [f"material_{n}" for n in range(1, volumes + 1)]
 
     brep_to_h5m(
         brep_filename=brep_filename,
-        volumes_with_tags={n: f"material_{n}" for n in range(1, volumes + 1)},
+        material_tags=material_tags,
         h5m_filename=h5m_filename,
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
     )
 
-    material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
     transport_particles_on_h5m_geometry(
         h5m_filename=h5m_filename, material_tags=material_tags
     )
@@ -162,17 +162,17 @@ def test_transport_on_h5m_with_2_joined_volumes():
     brep_filename = "tests/test_two_joined_cubes.brep"
     h5m_filename = "test_two_joined_cubes.h5m"
     volumes = 2
+    material_tags = [f"material_{n}" for n in range(1, volumes + 1)]
 
     brep_to_h5m(
         brep_filename=brep_filename,
-        volumes_with_tags={n: f"material_{n}" for n in range(1, volumes + 1)},
+        material_tags=material_tags,
         h5m_filename=h5m_filename,
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
     )
 
-    material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
     transport_particles_on_h5m_geometry(
         h5m_filename=h5m_filename, material_tags=material_tags
     )
@@ -183,17 +183,17 @@ def test_transport_on_h5m_with_2_sep_volumes():
     brep_filename = "tests/test_two_sep_cubes.brep"
     h5m_filename = "test_two_sep_cubes.h5m"
     volumes = 2
+    material_tags = [f"material_{n}" for n in range(1, volumes + 1)]
 
     brep_to_h5m(
         brep_filename=brep_filename,
-        volumes_with_tags={n: f"material_{n}" for n in range(1, volumes + 1)},
+        material_tags=material_tags,
         h5m_filename=h5m_filename,
         min_mesh_size=30,
         max_mesh_size=50,
         mesh_algorithm=1,
     )
 
-    material_tags = list({n: f"material_{n}" for n in range(1, 6 + 1)}.values())
     transport_particles_on_h5m_geometry(
         h5m_filename=h5m_filename, material_tags=material_tags
     )
@@ -204,10 +204,11 @@ def test_transport_result_h5m_with_2_sep_volumes():
     brep_filename = "tests/test_two_sep_cubes.brep"
     h5m_filename = "test_two_sep_cubes.h5m"
     volumes = 2
+    material_tags = [f"material_{n}" for n in range(1, volumes + 1)]
 
     brep_to_h5m(
         brep_filename=brep_filename,
-        volumes_with_tags={n: f"material_{n}" for n in range(1, volumes + 1)},
+        material_tags=material_tags,
         h5m_filename=h5m_filename,
         min_mesh_size=30,
         max_mesh_size=50,
@@ -221,7 +222,7 @@ def test_transport_result_h5m_with_2_sep_volumes():
 
     brep_to_h5m(
         brep_filename=brep_filename,
-        volumes_with_tags={n: f"material_{n}" for n in range(1, volumes + 1)},
+        material_tags=material_tags,
         h5m_filename=h5m_filename,
         min_mesh_size=30,
         max_mesh_size=50,
