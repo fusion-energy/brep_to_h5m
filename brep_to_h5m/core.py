@@ -7,11 +7,12 @@ import trimesh
 from pathlib import Path
 from stl_to_h5m import stl_to_h5m
 from vertices_to_h5m import vertices_to_h5m
+from typing import Tuple, Iterable
 
 
 def brep_to_h5m(
     brep_filename: str,
-    volumes_with_tags: dict,
+    volumes_with_tags: Iterable[Tuple[int, str]],
     h5m_filename: str = "dagmc.h5m",
     min_mesh_size: float = 30,
     max_mesh_size: float = 10,
@@ -22,8 +23,8 @@ def brep_to_h5m(
 
     Args:
         brep_filename: the filename of the Brep file to convert
-        volumes_with_tags: a dictionary with volume numbers as the keys and
-            the tag names to use in DAGMC as te values.
+        volumes_with_tags: an iterable of Tuples. Each tuple contains the
+            volume id and the matching material tag to use in DAGMC as the value
         h5m_filename: the filename of the DAGMC h5m file to write
         min_mesh_size: the minimum mesh element size to use in Gmsh. Passed
             into gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
@@ -54,7 +55,7 @@ def brep_to_h5m(
 
 def mesh_brep(
     brep_filename: str,
-    volumes_with_tags: dict,
+    volumes_with_tags: Iterable[Tuple[int, str]],
     min_mesh_size: float = 30,
     max_mesh_size: float = 10,
     mesh_algorithm: int = 1,
@@ -64,8 +65,8 @@ def mesh_brep(
 
     Args:
         brep_filename: the filename of the Brep file to convert
-        volumes_with_tags: a dictionary with volume numbers as the keys and
-            the tag names to use in DAGMC as te values.
+        volumes_with_tags: an iterable of Tuples. Each tuple contains the
+            volume id and the matching material tag to use in DAGMC as the value
         min_mesh_size: the minimum mesh element size to use in Gmsh. Passed
             into gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
         max_mesh_size: the maximum mesh element size to use in Gmsh. Passed
@@ -88,7 +89,7 @@ def mesh_brep(
     gmsh.model.occ.synchronize()
 
     vols_in_brep = len(volumes)
-    vols_provided_by_user = len(volumes_with_tags.keys())
+    vols_provided_by_user = len(volumes_with_tags)
 
     if vols_in_brep != vols_provided_by_user:
         msg = f"{vols_in_brep} volumes found in Brep file but only {vols_provided_by_user} volumes provided in volumes_with_tags argument."
@@ -113,7 +114,7 @@ def mesh_to_h5m_in_memory_method(
 ) -> str:
 
     material_tags = []
-    for tag_name in volumes_with_tags.values():
+    for (volume_id, tag_name) in volumes_with_tags:
         material_tags.append(tag_name)
 
     for dim_and_vol in volumes:
