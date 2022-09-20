@@ -20,6 +20,7 @@ requirements:
     - python {{ python }}
     - trimesh
     - networkx
+    - vertices_to_h5m
     - stl_to_h5m  # which brings in moab
     - gmsh  # core gmsh package without python bindings
     - python-gmsh  # python bindings to gmsh
