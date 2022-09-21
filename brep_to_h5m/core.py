@@ -189,7 +189,7 @@ def mesh_to_h5m_stl_method(
         delete_intermediate_stl_files: If set to True the intermediate STL
             files produced will be deleted. If set the False the intermediate
             STL files will be left intact.
-      
+
     Returns:
         The filename of the h5m file produced
     """
