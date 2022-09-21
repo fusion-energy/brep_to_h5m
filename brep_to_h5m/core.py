@@ -23,8 +23,8 @@ def brep_to_h5m(
 
     Args:
         brep_filename: the filename of the Brep file to convert
-        volumes_with_tags: an iterable of Tuples. Each tuple contains the
-            volume id and the matching material tag to use in DAGMC as the value
+        material_tags: A list of material tags to tag the DAGMC volumes with.
+            Should be in the same order as the volumes
         h5m_filename: the filename of the DAGMC h5m file to write
         min_mesh_size: the minimum mesh element size to use in Gmsh. Passed
             into gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)

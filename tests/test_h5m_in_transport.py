@@ -9,7 +9,6 @@ from brep_to_h5m import (
     mesh_to_h5m_stl_method,
     transport_particles_on_h5m_geometry,
 )
-import cadquery as cq
 
 """
 Tests that check that:
@@ -141,65 +140,12 @@ def test_transport_result_h5m_with_2_sep_volumes():
 
 def test_stl_vs_in_memory_1_volume():
 
-    # this is a single volume so no shared surface require merging
-    # the regular cadquery exportBrep can provide a suitable Brep file
-    # if merging surfaces is required for the Brep then the cad-to-h5m
-    # can merge the surfaces. This is just an example test case to check
-    # both methods work
-
-    result = cq.Workplane("front").circle(2.0).rect(0.5, 0.75).extrude(0.5)
-    result.solids().val().exportBrep("single_cube.brep")
-    material_Tags = ["mat1"]
-
-    gmsh, volumes = mesh_brep(
-        brep_filename="single_cube.brep",
-        min_mesh_size=1,
-        max_mesh_size=5,
-        mesh_algorithm=1,
-    )
-
-    mesh_to_h5m_in_memory_method(
-        volumes=volumes,
-        material_tags=material_Tags,
-        h5m_filename="h5m_from_in_memory_method.h5m",
-    )
-
-    # a new instance of gmsh is made to keep the two methods separate
-    gmsh, volumes = mesh_brep(
-        brep_filename="single_cube.brep",
-        min_mesh_size=1,
-        max_mesh_size=5,
-        mesh_algorithm=1,
-    )
-
-    mesh_to_h5m_stl_method(
-        volumes=volumes,
-        material_tags=material_Tags,
-        h5m_filename="h5m_from_in_stl_method.h5m",
-    )
-
-    in_memory_results = transport_particles_on_h5m_geometry(
-        h5m_filename="h5m_from_in_memory_method.h5m", material_tags=material_Tags
-    )
-    stl_results = transport_particles_on_h5m_geometry(
-        h5m_filename="h5m_from_in_stl_method.h5m", material_tags=material_Tags
-    )
-
-    assert math.isclose(in_memory_results, stl_results)
-
-
-def test_stl_vs_in_memory_2_joined_volume():
-
-    # this is a single volume so no shared surface require merging
-    # the regular cadquery exportBrep can provide a suitable Brep file
-    # if merging surfaces is required for the Brep then the cad-to-h5m
-    # can merge the surfaces. This is just an example test case to check
-    # both methods work
-    volumes = 2
+    brep_filename = "tests/one_cube.brep"
+    volumes = 1
     material_tags = [f"material_{n}" for n in range(1, volumes + 1)]
 
     gmsh, volumes = mesh_brep(
-        brep_filename="tests/test_two_joined_cubes.brep",
+        brep_filename=brep_filename,
         min_mesh_size=1,
         max_mesh_size=5,
         mesh_algorithm=1,
@@ -213,7 +159,50 @@ def test_stl_vs_in_memory_2_joined_volume():
 
     # a new instance of gmsh is made to keep the two methods separate
     gmsh, volumes = mesh_brep(
-        brep_filename="tests/test_two_joined_cubes.brep",
+        brep_filename=brep_filename,
+        min_mesh_size=1,
+        max_mesh_size=5,
+        mesh_algorithm=1,
+    )
+
+    mesh_to_h5m_stl_method(
+        volumes=volumes,
+        material_tags=material_tags,
+        h5m_filename="h5m_from_in_stl_method.h5m",
+    )
+
+    in_memory_results = transport_particles_on_h5m_geometry(
+        h5m_filename="h5m_from_in_memory_method.h5m", material_tags=material_tags
+    )
+    stl_results = transport_particles_on_h5m_geometry(
+        h5m_filename="h5m_from_in_stl_method.h5m", material_tags=material_tags
+    )
+
+    assert math.isclose(in_memory_results, stl_results)
+
+
+def test_stl_vs_in_memory_2_joined_volume():
+
+    brep_filename = "tests/test_two_joined_cubes.brep"
+    volumes = 2
+    material_tags = [f"material_{n}" for n in range(1, volumes + 1)]
+
+    gmsh, volumes = mesh_brep(
+        brep_filename=brep_filename,
+        min_mesh_size=1,
+        max_mesh_size=5,
+        mesh_algorithm=1,
+    )
+
+    mesh_to_h5m_in_memory_method(
+        volumes=volumes,
+        material_tags=material_tags,
+        h5m_filename="h5m_from_in_memory_method.h5m",
+    )
+
+    # a new instance of gmsh is made to keep the two methods separate
+    gmsh, volumes = mesh_brep(
+        brep_filename=brep_filename,
         min_mesh_size=1,
         max_mesh_size=5,
         mesh_algorithm=1,

@@ -40,7 +40,4 @@ jobs:
 
       - name: Run test_utils
         run: |
-          ls -lh
-          ls -lh tests
-          pwd
           pytest tests -v 
