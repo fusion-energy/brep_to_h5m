@@ -58,13 +58,11 @@ def mesh_brep(
     max_mesh_size: float = 10,
     mesh_algorithm: int = 1,
 ):
-    """Converts a Brep file into a DAGMC h5m file. This makes use of Gmsh and
-    will therefore need to have Gmsh installed to work.
+    """Creates a conformal surface meshes of the volumes in a Brep file using
+    Gmsh.
 
     Args:
         brep_filename: the filename of the Brep file to convert
-        volumes_with_tags: an iterable of Tuples. Each tuple contains the
-            volume id and the matching material tag to use in DAGMC as the value
         min_mesh_size: the minimum mesh element size to use in Gmsh. Passed
             into gmsh.option.setNumber("Mesh.MeshSizeMin", min_mesh_size)
         max_mesh_size: the maximum mesh element size to use in Gmsh. Passed
@@ -96,9 +94,20 @@ def mesh_brep(
 
 def mesh_to_h5m_in_memory_method(
     volumes,
-    material_tags,
+    material_tags: Iterable[str],
     h5m_filename: str = "dagmc.h5m",
 ) -> str:
+    """Converts gmsh volumes into a DAGMC h5m file.
+
+    Args:
+        volumes: the volumes in the gmsh file, found with gmsh.model.occ.importShapes
+        material_tags: A list of material tags to tag the DAGMC volumes with.
+            Should be in the same order as the volumes
+        h5m_filename: the filename of the DAGMC h5m file to write
+
+    Returns:
+        The filename of the h5m file produced
+    """
 
     if len(volumes) != len(material_tags):
         msg = f"{len(volumes)} volumes found in Brep file is not equal to the number of material_tags {len(material_tags)} provided."
@@ -161,17 +170,17 @@ def mesh_to_h5m_in_memory_method(
 
 def mesh_to_h5m_stl_method(
     volumes,
-    material_tags,
+    material_tags: Iterable[str],
     h5m_filename: str = "dagmc.h5m",
     write_stl_files_to_temp: bool = True,
     delete_intermediate_stl_files: bool = True,
 ) -> str:
-    """Converts a Brep file into a DAGMC h5m file. This makes use of Gmsh and
-    will therefore need to have Gmsh installed to work.
+    """Converts gmsh volumes into a DAGMC h5m file.
 
     Args:
-        mesh: the gmsh mesh object
         volumes: the volumes in the gmsh file, found with gmsh.model.occ.importShapes
+        material_tags: A list of material tags to tag the DAGMC volumes with.
+            Should be in the same order as the volumes
         h5m_filename: the filename of the DAGMC h5m file to write
         write_stl_files_to_temp: If set to True the intermediate STL files
             required will be written to the operating systems temporary file
@@ -180,13 +189,7 @@ def mesh_to_h5m_stl_method(
         delete_intermediate_stl_files: If set to True the intermediate STL
             files produced will be deleted. If set the False the intermediate
             STL files will be left intact.
-        write_stl_files_to_temp: If set to True the intermediate STL files
-            required will be written to the operating systems temporary file
-            folder. If set to False the STL files will be written to the
-            current working directory.
-        delete_intermediate_stl_files: If set to True the intermediate STL
-            files produced will be deleted. If set the False the intermediate
-            STL files will be left intact.
+      
     Returns:
         The filename of the h5m file produced
     """
@@ -249,7 +252,8 @@ def transport_particles_on_h5m_geometry(
 ):
     """A function for testing the geometry file with particle transport in
     DAGMC OpenMC. Requires openmc and either the cross_sections_xml to be
-    specified or openmc_data_downloader installed.
+    specified or openmc_data_downloader installed. Returns the flux on each
+    volume
 
     Arg:
         h5m_filename: The name of the DAGMC h5m file to test
@@ -258,6 +262,7 @@ def transport_particles_on_h5m_geometry(
         cross_sections_xml:
 
     """
+
     import openmc
     from openmc.data import NATURAL_ABUNDANCE
 
@@ -303,8 +308,6 @@ def transport_particles_on_h5m_geometry(
         center_of_geometry[2] + 0.1,
     )
 
-    print("center_of_geometry", center_of_geometry)
-
     my_source.space = openmc.stats.Point(center_of_geometry_nudged)
     # sets the direction to isotropic
     my_source.angle = openmc.stats.Isotropic()
@@ -338,4 +341,5 @@ def transport_particles_on_h5m_geometry(
     statepoint = openmc.StatePoint(output_file)
 
     my_flux_cell_tally = statepoint.get_tally(name="flux")
+
     return my_flux_cell_tally.mean.flatten()[0]
