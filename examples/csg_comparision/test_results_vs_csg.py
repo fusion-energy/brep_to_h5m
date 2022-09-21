@@ -4,14 +4,14 @@ import os
 
 
 inner_blanket_radius = 100.0
-blanket_thickness = 70.0
-blanket_height = 500.0
-lower_blanket_thickness = 50.0
-upper_blanket_thickness = 40.0
+blanket_thickness = 1.0
+blanket_height = 5.0
+lower_blanket_thickness = 1.0
+upper_blanket_thickness = 1.0
 blanket_vv_gap = 20.0
-upper_vv_thickness = 10.0
-vv_thickness = 10.0
-lower_vv_thickness = 10.0
+upper_vv_thickness = 1.0
+vv_thickness = 1.0
+lower_vv_thickness = 1.0
 
 
 mat_vessel_cell_lower = openmc.Material(1, name="lower_vessel")
@@ -188,7 +188,7 @@ settings = openmc.Settings()
 settings.inactive = 0
 settings.run_mode = "fixed source"
 settings.batches = 100
-settings.particles = 10000
+settings.particles = 100000
 settings.source = my_source
 
 
@@ -206,16 +206,17 @@ os.system("rm *.h5")
 
 import paramak
 
+
 reactor = paramak.FlfSystemCodeReactor(
-    inner_blanket_radius=100.0,
-    blanket_thickness=70.0,
-    blanket_height=500.0,
-    lower_blanket_thickness=50.0,
-    upper_blanket_thickness=40.0,
-    blanket_vv_gap=20.0,
-    upper_vv_thickness=10.0,
-    vv_thickness=10.0,
-    lower_vv_thickness=10.0,
+    inner_blanket_radius=inner_blanket_radius,
+    blanket_thickness=blanket_thickness,
+    blanket_height=blanket_height,
+    lower_blanket_thickness=lower_blanket_thickness,
+    upper_blanket_thickness=upper_blanket_thickness,
+    blanket_vv_gap=blanket_vv_gap,
+    upper_vv_thickness=upper_vv_thickness,
+    vv_thickness=vv_thickness,
+    lower_vv_thickness=lower_vv_thickness,
     rotation_angle=360,
 )
 reactor.export_dagmc_h5m(
