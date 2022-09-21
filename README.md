@@ -14,8 +14,8 @@
 
 A Python package that converts Brep CAD geometry files to h5m geometry files compatible with DAGMC simulations.
 
-The method uses gmsh to create a conformal mesh of the geometry and then exports separate volumes to STL files.
-The [stl-to-h5m](github.com/fusion-energy/stl_to_h5m) package then converts the non overlapping STL files into a h5m geometry.
+The method uses gmsh to create a conformal mesh of the geometry.
+The mesh is then converted into a h5m file using either the [vertices-to-h5m](https://github.com/fusion-energy/vertices_to_h5m) (default) or [stl-to-h5m](https://github.com/fusion-energy/stl_to_h5m) package.
 
 # Installation (Conda)
 
