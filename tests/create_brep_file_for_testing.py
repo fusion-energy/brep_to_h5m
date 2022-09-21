@@ -41,6 +41,7 @@ my_cube_3 = paramak.ExtrudeStraightShape(
     ],
     distance=5,
 )
+
 my_cube_4 = paramak.ExtrudeStraightShape(
     name="my_cube_4",
     points=[
