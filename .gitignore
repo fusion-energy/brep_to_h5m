@@ -134,7 +134,9 @@ dmypy.json
 *.brep
 *.h5m
 *.msh
+*.html
 *.stp
+
 
 # OpenMC outputs
 *.xml
