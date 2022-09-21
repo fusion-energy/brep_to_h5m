@@ -134,7 +134,7 @@ def mesh_to_h5m_in_memory_method(
             for nodeTag in nodeTags:
                 shifted_node_tags.append(nodeTag - 1)
             grouped_node_tags = [
-                shifted_node_tags[i: i + n]
+                shifted_node_tags[i : i + n]
                 for i in range(0, len(shifted_node_tags), n)
             ]
             nodes_in_all_surfaces += grouped_node_tags
@@ -143,7 +143,7 @@ def mesh_to_h5m_in_memory_method(
     _, all_coords, _ = gmsh.model.mesh.getNodes()
 
     GroupedCoords = [
-        all_coords[i: i + n].tolist() for i in range(0, len(all_coords), n)
+        all_coords[i : i + n].tolist() for i in range(0, len(all_coords), n)
     ]
 
     gmsh.finalize()
@@ -224,7 +224,7 @@ def mesh_to_h5m_stl_method(
 
         if delete_intermediate_stl_files:
             os.remove(filename)  # deletes tmp stl file
-        tag_name = material_tags[vol_id-1]
+        tag_name = material_tags[vol_id - 1]
         if not tag_name.startswith("mat:"):
             # TODO check if graveyard or mat_graveyard should be excluded
             # and tag_name.lower!='graveyard':
@@ -245,7 +245,7 @@ def transport_particles_on_h5m_geometry(
     h5m_filename: str,
     material_tags: list,
     nuclides: list = None,
-    cross_sections_xml: str=None
+    cross_sections_xml: str = None,
 ):
     """A function for testing the geometry file with particle transport in
     DAGMC OpenMC. Requires openmc and either the cross_sections_xml to be
@@ -279,7 +279,10 @@ def transport_particles_on_h5m_geometry(
     else:
         # downloads the nuclear data and sets the openmc_cross_sections environmental variable
         import openmc_data_downloader as odd
-        odd.just_in_time_library_generator(libraries="ENDFB-7.1-NNDC", materials=materials)
+
+        odd.just_in_time_library_generator(
+            libraries="ENDFB-7.1-NNDC", materials=materials
+        )
 
     dag_univ = openmc.DAGMCUniverse(filename=h5m_filename)
     bound_dag_univ = dag_univ.bounded_universe()

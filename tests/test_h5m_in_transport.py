@@ -3,7 +3,12 @@ import openmc_data_downloader as odd
 from brep_to_h5m import brep_to_h5m, transport_particles_on_h5m_geometry
 import math
 
-from brep_to_h5m import mesh_brep, mesh_to_h5m_in_memory_method, mesh_to_h5m_stl_method, transport_particles_on_h5m_geometry
+from brep_to_h5m import (
+    mesh_brep,
+    mesh_to_h5m_in_memory_method,
+    mesh_to_h5m_stl_method,
+    transport_particles_on_h5m_geometry,
+)
 import cadquery as cq
 
 """
@@ -142,7 +147,6 @@ def test_stl_vs_in_memory_1_volume():
     # can merge the surfaces. This is just an example test case to check
     # both methods work
 
-
     result = cq.Workplane("front").circle(2.0).rect(0.5, 0.75).extrude(0.5)
     result.solids().val().exportBrep("single_cube.brep")
     material_Tags = ["mat1"]
@@ -171,7 +175,7 @@ def test_stl_vs_in_memory_1_volume():
     mesh_to_h5m_stl_method(
         volumes=volumes,
         material_tags=material_Tags,
-        h5m_filename="h5m_from_in_stl_method.h5m"
+        h5m_filename="h5m_from_in_stl_method.h5m",
     )
 
     in_memory_results = transport_particles_on_h5m_geometry(
@@ -191,7 +195,7 @@ def test_stl_vs_in_memory_2_joined_volume():
     # if merging surfaces is required for the Brep then the cad-to-h5m
     # can merge the surfaces. This is just an example test case to check
     # both methods work
-    volumes=2
+    volumes = 2
     material_tags = [f"material_{n}" for n in range(1, volumes + 1)]
 
     gmsh, volumes = mesh_brep(
@@ -218,7 +222,7 @@ def test_stl_vs_in_memory_2_joined_volume():
     mesh_to_h5m_stl_method(
         volumes=volumes,
         material_tags=material_tags,
-        h5m_filename="h5m_from_in_stl_method.h5m"
+        h5m_filename="h5m_from_in_stl_method.h5m",
     )
 
     in_memory_results = transport_particles_on_h5m_geometry(
