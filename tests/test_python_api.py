@@ -14,14 +14,14 @@ class TestApiUsage:
         os.system("rm test_brep_file.h5m")
         brep_to_h5m(
             brep_filename="tests/test_brep_file.brep",
-            volumes_with_tags={
-                1: "material_for_volume_1",
-                2: "material_for_volume_2",
-                3: "material_for_volume_3",
-                4: "material_for_volume_4",
-                5: "material_for_volume_5",
-                6: "material_for_volume_6",
-            },
+            material_tags=[
+                "material_for_volume_1",
+                "material_for_volume_2",
+                "material_for_volume_3",
+                "material_for_volume_4",
+                "material_for_volume_5",
+                "material_for_volume_6",
+            ],
             h5m_filename="test_brep_file.h5m",
             min_mesh_size=30,
             max_mesh_size=50,
@@ -36,14 +36,14 @@ class TestApiUsage:
         os.system("rm *.h5m")
         brep_to_h5m(
             brep_filename="tests/test_brep_file.brep",
-            volumes_with_tags={
-                1: "material_for_volume_1",
-                2: "material_for_volume_2",
-                3: "material_for_volume_3",
-                4: "material_for_volume_4",
-                5: "material_for_volume_5",
-                6: "material_for_volume_6",
-            },
+            material_tags=[
+                "material_for_volume_1",
+                "material_for_volume_2",
+                "material_for_volume_3",
+                "material_for_volume_4",
+                "material_for_volume_5",
+                "material_for_volume_6",
+            ],
             h5m_filename="test_brep_file_10.h5m",
             min_mesh_size=20,
             max_mesh_size=19,
@@ -51,14 +51,14 @@ class TestApiUsage:
         )
         brep_to_h5m(
             brep_filename="tests/test_brep_file.brep",
-            volumes_with_tags={
-                1: "material_for_volume_1",
-                2: "material_for_volume_2",
-                3: "material_for_volume_3",
-                4: "material_for_volume_4",
-                5: "material_for_volume_5",
-                6: "material_for_volume_6",
-            },
+            material_tags=[
+                "material_for_volume_1",
+                "material_for_volume_2",
+                "material_for_volume_3",
+                "material_for_volume_4",
+                "material_for_volume_5",
+                "material_for_volume_6",
+            ],
             h5m_filename="test_brep_file_30.h5m",
             min_mesh_size=20,
             max_mesh_size=30,
@@ -79,15 +79,15 @@ class TestApiUsage:
         os.system(f"rm {test_h5m_filename}")
         returned_filename = brep_to_h5m(
             brep_filename="tests/test_brep_file.brep",
-            volumes_with_tags={
-                1: "mat1",
-                2: "mat2",
-                3: "mat3",
-                4: "mat4",
-                5: "mat5",
-                6: "mat6",
-            },
-            h5m_filename=f"{test_h5m_filename}",
+            material_tags=[
+                "mat1",
+                "mat2",
+                "mat3",
+                "mat4",
+                "mat5",
+                "mat6",
+            ],
+            h5m_filename=test_h5m_filename,
             min_mesh_size=30,
             max_mesh_size=50,
             mesh_algorithm=1,
