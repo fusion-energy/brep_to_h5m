@@ -109,6 +109,10 @@ def mesh_to_h5m_in_memory_method(
         The filename of the h5m file produced
     """
 
+    if isinstance(material_tags, str):
+        msg = f"material_tags should be a list of strings, not a single string."
+        raise ValueError(msg)
+
     if len(volumes) != len(material_tags):
         msg = f"{len(volumes)} volumes found in Brep file is not equal to the number of material_tags {len(material_tags)} provided."
         raise ValueError(msg)
