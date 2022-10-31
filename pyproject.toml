@@ -22,7 +22,6 @@ dependencies = [
     "networkx",
     "stl_to_h5m",
     "vertices_to_h5m",
-    "gmsh",
 ]
 dynamic = ["version"]
 
