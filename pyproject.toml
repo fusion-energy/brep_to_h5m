@@ -46,6 +46,3 @@ tests = [
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-
-[tool.setuptools_scm]
-write_to = "brep_to_h5m/_version.py"
